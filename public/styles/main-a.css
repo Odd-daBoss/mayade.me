@@ -1,0 +1,80 @@
+html, body {
+  font-family: 'Roboto', 'Helvetica', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.mdl-grid {
+    max-width: 600px;
+    margin-top: 20px;
+
+}
+.mdl-card__media {
+    margin: 0;
+}
+.mdl-card__media > img {
+    max-width: 100%;
+}
+.mdl-card__actions {
+    display: flex;
+    box-sizing:border-box;
+    align-items: center;
+}
+.mdl-card__actions > .mdl-button--icon {
+    margin-right: 3px;
+    margin-left: 3px;
+}
+.mdl-button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.mdl-textfield {
+    width: 100%;
+}
+.fixed-buttons {
+    position: fixed;
+    top: 100px;
+    right: 0;
+    width:64px;
+    z-index: 999;
+}
+.none {
+  display: none;
+}
+.userPic {
+  position: relative;
+  display: inline-block;
+  background-image: url('/images/profile_placeholder.svg');
+  background-repeat: no-repeat;
+  width: 60px;
+  height: 60px;
+  background-size: 60px;
+  border-radius: 30px;
+}
+.center-wrapper {
+  padding: 1em;
+  margin: 3px;
+  text-align: center;
+}
+img {
+  max-width: 100%;
+}
+#input-wrapper {
+  padding: 1em;
+  margin: 3px;
+}
+#user-container #user-pic {
+  position: relative;
+  display: inline-block;
+  background-image: url('/images/profile_placeholder.svg');
+  background-repeat: no-repeat;
+  width: 60px;
+  height: 60px;
+  background-size: 60px;
+  border-radius: 30px;
+}
+#user-container #user-name {
+  font-size: 10px;
+  line-height: 36px;
+  padding-right: 5px;
+  padding-left: 5px;
+}
