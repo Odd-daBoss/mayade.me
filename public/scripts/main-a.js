@@ -5,7 +5,7 @@ function LiveCards() {
 
   // Shortcuts to DOM Elements.
   this.storyList0 = document.getElementById('story-list-0');
-  this.submitButton = document.getElementById('submit');
+  // this.submitButton = document.getElementById('submit');
   this.imageUpload = document.getElementById('image-upload');
   this.titleStory = document.getElementById('title-story');
   this.contentStory = document.getElementById('content-story');
@@ -71,7 +71,7 @@ LiveCards.prototype.gotoBook = function() {
   var newIcon = document.getElementById('new-badge');
   newIcon.setAttribute('data-badge', -1);
   var loadPrev = document.getElementById('load-prev');
-  loadPrev.setAttribute('hidden', 'true');
+  loadPrev.disabled = true;
 };
 
 //Loads the stories from the bookRef - n: Lot-Size, type: init or loop.
@@ -105,7 +105,7 @@ LiveCards.prototype.initBook = function() {
     newIcon.setAttribute('data-badge', newStory);
     var loadPrev = document.getElementById('load-prev');
     if (newStory > 0) {
-      loadPrev.removeAttribute('hidden');
+      loadPrev.disabled = false;
     }
   }.bind(this);
 
@@ -132,7 +132,7 @@ LiveCards.prototype.initBook = function() {
       var alertStory = m - i*n - 1;
       if (alertStory <= 0) {
         var loadNext = document.getElementById('load-next');
-        loadNext.setAttribute('hidden', 'true');
+        loadNext.disabled = true;
         console.log('alertStory <= 0');
       } else {
         console.log('Story: ' + alertStory);
@@ -154,7 +154,7 @@ LiveCards.prototype.loopBook = function() {
     this.userName.textContent = 'Not signing in!';
   }
   // Load stories when button click.
-  var n = 6; // Loads story of (n) = lot-size +1
+  var n = 2; // Loads story of (n) = lot-size +1
   var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
   var keyTracker = document.getElementsByClassName("key-tracker")[0].id; // Get key-tracker.
   var keyID = keyTracker.substr(1);
@@ -185,7 +185,7 @@ LiveCards.prototype.loopBook = function() {
     newIcon.setAttribute('data-badge', newStory);
     var loadPrev = document.getElementById('load-prev');
     if (newStory > 0) {
-      loadPrev.removeAttribute('hidden');
+      loadPrev.disabled = false;
     }
   }.bind(this);
 
@@ -202,7 +202,7 @@ LiveCards.prototype.loopBook = function() {
     var alertStory = m - i*n;
     if (alertStory <= 0) {
       var loadNext = document.getElementById('load-next');
-      loadNext.setAttribute('hidden', 'true');
+      loadNext.disbled = true;
         console.log('alertStory <= 0');
     } else {
       console.log('Story: ' + alertStory);
@@ -471,9 +471,14 @@ LiveCards.prototype.editDisplay = function(key, title, content, name, picUrl, im
 //Add a new card.
 LiveCards.prototype.addNewCard = function() {
   scroll(0,0);
+  var buttonMain = document.getElementById('icon-main');
   if (this.auth.currentUser) {
     this.inputBlock.removeAttribute('hidden');
+    this.addCard.setAttribute('hidden', 'true');
+    this.signOutButton.removeAttribute('hidden');
   } else {
+    console.log(buttonMain);
+    if (buttonMain.innerHTML == "lock") buttonMain.innerHTML = "create";
     // Sign in Firebase using popup auth and Google as the identity provider.
     var provider = new firebase.auth.GoogleAuthProvider();
     this.auth.signInWithPopup(provider);
@@ -485,6 +490,8 @@ LiveCards.prototype.deleteNewCard = function() {
     fileDisplay.innerHTML = "";
     this.storyForm.reset();
     this.inputBlock.setAttribute('hidden', 'true');
+    this.addCard.removeAttribute('hidden');
+    this.signOutButton.setAttribute('hidden', 'true');
 };
 
 // Sets the URL of the given img element with the URL of the image stored in Cloud Storage.
@@ -531,6 +538,8 @@ LiveCards.prototype.saveStory = function(event) {
           }.bind(this)).catch(function(error) {
               console.error('There was an error uploading a file to Cloud Storage:', error);
             });
+        this.addCard.removeAttribute('hidden');
+        this.signOutButton.setAttribute('hidden', 'true');
       }
     } else {
       // Check that the user uploaded image or entered a title or any content.
@@ -551,6 +560,8 @@ LiveCards.prototype.saveStory = function(event) {
           }.bind(this)).catch(function(error) {
               console.error('Error writing new message to Firebase Database', error);
             });
+        this.addCard.removeAttribute('hidden');
+        this.signOutButton.setAttribute('hidden', 'true');
       }
     }
   } else {
@@ -572,6 +583,9 @@ LiveCards.prototype.signOut = function() {
   this.userPic.style.backgroundImage = "url('/images/profile_placeholder.svg')";
   this.userName.textContent = 'Not signing in!';
   this.deleteNewCard();
+  this.addCard.removeAttribute('hidden');
+  var buttonMain = document.getElementById('icon-main');
+  if (buttonMain.innerHTML == "create") buttonMain.innerHTML = "lock";
   scroll(0,0);
 };
 
@@ -585,15 +599,21 @@ LiveCards.prototype.onAuthStateChanged = function(user) {
     // Set the user's profile pic and name.
     this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
     this.userName.textContent = userName;
+    this.addCard.removeAttribute('hidden');
+    var buttonMain = document.getElementById('icon-main');
+    if (buttonMain.innerHTML == "lock") buttonMain.innerHTML = "create";
 
     // Show sign-out button and input new card form.
-    this.signOutButton.removeAttribute('hidden');
+    // this.signOutButton.removeAttribute('hidden');
     // this.inputBlock.removeAttribute('hidden');
 
   } else { // User is signed out!
     // Hide sign-out button and input form.
     this.signOutButton.setAttribute('hidden', 'true');
     this.inputBlock.setAttribute('hidden', 'true');
+    this.addCard.removeAttribute('hidden');
+    var buttonMain = document.getElementById('icon-main');
+    if (buttonMain.innerHTML == "create") buttonMain.innerHTML = "lock";
   }
 };
 

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Would you mind mayade.me?</title>
+    <title>Write Your Mind | MaYaDe.Me?</title>
 
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,300italic,500,400italic,700,700italic' rel='stylesheet' type='text/css'>
@@ -40,15 +40,15 @@
                 <label class="mdl-textfield__label" for="content-story">Story</label>
               </div><br />
             </div>
-            <div class="mdl-card__actions mdl-card--border">
+            <div class="mdl-card__actions mdl-card--border center-wrapper">
               <div id="user-container" class="mdl-card__title mdl-card--expand">
                 <div id="user-pic"></div>
-                <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="https://plus.google.com/+UdomsakOdd">
-                <div id="user-name"></div></a>
+                <span class="mdl-chip">
+                  <span id="user-name" class="mdl-chip__text"></span>
+                </span>
               </div>
-              <div class="mdl-layout-spacer"></div>
-              <button id="submit" type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--accent">
-                <i class="material-icons" role="presentation">send</i>
+              <button id="submit" type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+                <i class="material-icons">send</i>
               </button>
             </div>
           </form>
@@ -66,34 +66,33 @@
       <div id="story-list-0"></div>
     </div>
 
-    <!-- Load more button -->
-    <div id="loop-more" class="center-wrapper">
-      <span id="load-next">
-        <div id="loop" class="loop-tracker"></div>
-        <div id="nxt-badge" class="loop-tracker material-icons mdl-badge" data-badge="">import_contacts</div>
-        <button id="next-button" class="mdl-button mdl-button--icon mdl-button--colored">
-          <i class="material-icons">keyboard_arrow_down</i>
-        </button>
-      </span>
-      <span id="load-prev" hidden>
-        <button id="prev-button" class="mdl-button mdl-button--icon mdl-button--colored" onclick="location.href='#show-list';">
-          <i class="material-icons">keyboard_arrow_up</i>
-        </button>
-        <div id="new-badge" class="material-icons mdl-badge" data-badge="-1">rate_review</div>
-        <div id="key" class="key-tracker"></div>
-      </span>
-    </div>
 
-    <!-- Display fixed buttons -->
-    <div id="user-container" class="fixed-buttons">
-      <button id="add-card" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect
-        mdl-button--colored mdl-shadow--3dp mdl-color--accent">
-        <i class="material-icons" role="presentation">create</i>
-      </button>
-      <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect
-        mdl-button--colored mdl-shadow--3dp mdl-color--accent">
-        <i class="material-icons" role="presentation">exit_to_app</i>
-      </button>
+    <!-- Display fixed: Command and Load More buttons -->
+    <div id="user-container" class="fixed-bottom">
+      <div id="loop-more" class="center-wrapper">
+        <span id="load-next">
+          <div id="loop" class="loop-tracker"></div>
+          <div id="nxt-badge" hidden class="loop-tracker material-icons mdl-badge" data-badge="">import_contacts</div>
+          <button id="next-button" class="mdl-button mdl-button--icon mdl-button--colored">
+            <i class="material-icons">keyboard_arrow_down</i>
+          </button>
+        </span>
+        <button id="add-card" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect
+          mdl-color-text--white mdl-shadow--3dp mdl-color--accent">
+          <i id="icon-main" class="material-icons" role="presentation">lock</i>
+        </button>
+        <button hidden id="sign-out" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect
+          mdl-button--colored mdl-shadow--3dp mdl-color--accent">
+          <i class="material-icons" role="presentation">exit_to_app</i>
+        </button>
+        <span id="load-prev">
+          <button id="prev-button" class="mdl-button mdl-button--icon mdl-button--colored" onclick="location.href='#show-list';">
+            <i class="material-icons">keyboard_arrow_up</i>
+          </button>
+          <div id="new-badge" hidden class="material-icons mdl-badge" data-badge="-1">rate_review</div>
+          <div id="key" class="key-tracker"></div>
+        </span>
+      </div>
     </div>
 
     <!-- update the version number as needed -->
