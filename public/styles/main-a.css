@@ -78,3 +78,7 @@ img {
   background-size: 60px;
   border-radius: 30px;
 }
+#footer-div {
+  position: relative;
+  z-index: 999;
+}

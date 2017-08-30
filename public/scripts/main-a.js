@@ -68,10 +68,12 @@ LiveCards.prototype.handleFileSelect = function(event) {
 };
 
 LiveCards.prototype.gotoBook = function() {
+/*
   var newIcon = document.getElementById('new-badge');
   newIcon.setAttribute('data-badge', -1);
   var loadPrev = document.getElementById('load-prev');
   loadPrev.disabled = true;
+*/
 };
 
 //Loads the stories from the bookRef - n: Lot-Size, type: init or loop.
@@ -81,10 +83,17 @@ LiveCards.prototype.initBook = function() {
   if (!this.auth.currentUser) { // Clear User Name - if not signing in!
     this.userName.textContent = 'Not signing in!';
   }
+  // Initial Screen Display Trackers:
+  var newX = document.getElementsByClassName("new-display")[0];
+  newX.setAttribute('id',0); // Newly Added on-Screen Display Story = 0
+  var scrX = document.getElementsByClassName("scr-display")[0];
+  scrX.setAttribute('id',0); // on-Screen Display Story = 0
+  var delX = document.getElementsByClassName("del-display")[0];
+  delX.setAttribute('id',0); // Deleted on-Screen Display = 0
   // Initial loads the last number of stories and listen for new ones.
   var nextKey;
   var i = 0; // Set initial loop and initial story.
-  var n = 1; // Set initial display lot.
+  var n = 2; // Set initial display lot.
   var keyTrk = document.getElementById('key'); // Get loop key-tracker.
   var iniStory = function(data, prevKey) {
     var val = data.val();
@@ -104,9 +113,6 @@ LiveCards.prototype.initBook = function() {
     var newIcon = document.getElementById('new-badge');
     newIcon.setAttribute('data-badge', newStory);
     var loadPrev = document.getElementById('load-prev');
-    if (newStory > 0) {
-      loadPrev.disabled = false;
-    }
   }.bind(this);
 
   var chgStory = function(data, prevKey) {
@@ -124,15 +130,20 @@ LiveCards.prototype.initBook = function() {
     var parent = document.getElementById(data.key).parentNode; // Get the correct parent HERE!!
     console.log('parent: ' + parent);
     parent.removeChild(child);
+    var z = document.getElementsByClassName("scr-display")[0].id;
+    var scrZ = document.getElementsByClassName("scr-display")[0];
+    z--;
+    scrZ.setAttribute('id',z);
   });
 
   if (keyTrk) {
     this.bookRef.once('value').then(function(snapshot) {
+      var sizeDB = document.getElementsByClassName("all-records")[0];
       var m = snapshot.numChildren();
-      var alertStory = m - i*n - 1;
+      sizeDB.setAttribute('id',m);
+      var alertStory = m - i*n - 2;
       if (alertStory <= 0) {
         var loadNext = document.getElementById('load-next');
-        loadNext.disabled = true;
         console.log('alertStory <= 0');
       } else {
         console.log('Story: ' + alertStory);
@@ -184,9 +195,6 @@ LiveCards.prototype.loopBook = function() {
     var newIcon = document.getElementById('new-badge');
     newIcon.setAttribute('data-badge', newStory);
     var loadPrev = document.getElementById('load-prev');
-    if (newStory > 0) {
-      loadPrev.disabled = false;
-    }
   }.bind(this);
 
   var chgStory = function(data, prevKey) {
@@ -198,15 +206,15 @@ LiveCards.prototype.loopBook = function() {
   i++; // Read block of (n) stories.
   this.bookRef.orderByKey().endAt(keyID).limitToLast(n).on('child_added', setStory);
   this.bookRef.once('value').then(function(snapshot) {
+    var sizeDB = document.getElementsByClassName("all-records")[0];
     var m = snapshot.numChildren();
+    sizeDB.setAttribute('id',m);
     var alertStory = m - i*n;
     if (alertStory <= 0) {
       var loadNext = document.getElementById('load-next');
-      loadNext.disbled = true;
-        console.log('alertStory <= 0');
+      console.log('alertStory <= 0 | ' + alertStory);
     } else {
       console.log('Story: ' + alertStory);
-
       var prevIcon = document.getElementById('nxt-badge');
       prevIcon.setAttribute('data-badge', alertStory);
     }
@@ -220,6 +228,10 @@ LiveCards.prototype.loopBook = function() {
     var parent = document.getElementById(data.key).parentNode; // Get the correct parent HERE!!
     console.log('parent: ' + parent);
     parent.removeChild(child);
+    var z = document.getElementsByClassName("scr-display")[0].id;
+    var scrZ = document.getElementsByClassName("scr-display")[0];
+    z--;
+    scrZ.setAttribute('id',z);
   });
   var newStory = document.getElementById('new-badge').getAttribute("data-badge");
   newStory--;
@@ -292,8 +304,16 @@ LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, im
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
       this.storyList0.insertBefore(div,this.storyList0.firstChild);
+      var z = document.getElementsByClassName("new-display")[0].id;
+      var newZ = document.getElementsByClassName("new-display")[0];
+      z++;
+      newZ.setAttribute('id',z);
     } else {
       this.storyList0.appendChild(div);
+      var z = document.getElementsByClassName("scr-display")[0].id;
+      var scrZ = document.getElementsByClassName("scr-display")[0];
+      z++;
+      scrZ.setAttribute('id',z);
     }
   }
   if (!imageUri) { // If the story has NO-image.
@@ -324,58 +344,70 @@ LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, im
 
 // Displays a Story in the UI.
 LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, imageUri, date) {
-  var showList = document.getElementById("show-list");
-  var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
-  var listName = "story-list-" + i;
-  console.log('create name: ' + listName);
-  var loopList = document.getElementById(listName); // Get "story-list-i"
-  if (!loopList) { // If no story-list-i, create now!
-    loopList = document.createElement("DIV");
-    loopList.setAttribute('id', listName);
-    showList.appendChild(loopList);
-  }
-  var div = document.getElementById(key); // Get story div.
-  var storyDate = date; // Get story date.
-  if (!div) { // If an element for that story does not exists yet we create it.
-    var fDate = document.getElementById(listName).getElementsByClassName("dateTime")[0];
-    if (fDate) {
-      var firstDate = fDate.innerHTML;
-    } else {
-      firstDate = 0;
+  var m = document.getElementsByClassName("all-records")[0].id;
+  var n = document.getElementsByClassName("new-display")[0].id;
+  var s = document.getElementsByClassName("scr-display")[0].id;
+  var d = document.getElementsByClassName("del-display")[0].id;
+  var loadLeft = m - n - s - d;
+  if (loadLeft > 0) {
+    var showList = document.getElementById("show-list");
+    var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
+    var listName = "story-list-" + i;
+    console.log('create name: ' + listName);
+    var loopList = document.getElementById(listName); // Get "story-list-i"
+    if (!loopList) { // If no story-list-i, create now!
+      loopList = document.createElement("DIV");
+      loopList.setAttribute('id', listName);
+      showList.appendChild(loopList);
     }
-    if (storyDate > firstDate) {
-      var container = document.createElement("DIV");
-      container.innerHTML = LiveCards.STORY_TEMPLATE;
-      div = container.firstChild;
-      div.setAttribute('id', key);
-      div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-      div.getElementsByClassName("dateTime")[0].innerHTML = date;
-      var x = div.getElementsByClassName("likeButton")[0];
-      x.setAttribute('id', key+'.like');
-      loopList.insertBefore(div,loopList.firstChild);
-      if (!imageUri) { // If the story has NO-image.
-        div.getElementsByClassName("storyImage")[0].innerHTML = '';
-      } else { // If the story has an image.
-        div.getElementsByClassName("storyImage")[0].innerHTML = LiveCards.IMAGE_PROGRESSBAR;
-        var image = document.createElement('img');
-        image.addEventListener('load', function() {
-          // Remove MDL Progress Bar when done!
-          div.getElementsByClassName("materialBar")[0].innerHTML = '';
-        }.bind(this));
-        this.setImageUrl(imageUri, image);
-        div.getElementsByClassName("storyImage")[0].appendChild(image);
+    loopList.scrollIntoView();
+    var div = document.getElementById(key); // Get story div.
+    var storyDate = date; // Get story date.
+    if (!div) { // If an element for that story does not exists yet we create it.
+      var fDate = document.getElementById(listName).getElementsByClassName("dateTime")[0];
+      if (fDate) {
+        var firstDate = fDate.innerHTML;
+      } else {
+        firstDate = 0;
       }
-      if (!title) { // If the story has NO-title.
-        div.getElementsByClassName("title")[0].innerHTML = '';
-      } else { // If the story has a title.
-        var htmlTitle = title.replace(/\n/g, '<br>');
-        div.getElementsByClassName("title")[0].innerHTML = htmlTitle;
-      }
-      if (!content) { // It the story has NO-content.
-        div.getElementsByClassName("content")[0].innerHTML = '';
-      } else { // It the story has a content.
-        var htmlContent = content.replace(/\n/g, '<br>');
-        div.getElementsByClassName("content")[0].innerHTML = htmlContent;
+      if (storyDate > firstDate) {
+        var container = document.createElement("DIV");
+        container.innerHTML = LiveCards.STORY_TEMPLATE;
+        div = container.firstChild;
+        div.setAttribute('id', key);
+        div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
+        div.getElementsByClassName("dateTime")[0].innerHTML = date;
+        var x = div.getElementsByClassName("likeButton")[0];
+        x.setAttribute('id', key+'.like');
+        loopList.insertBefore(div,loopList.firstChild);
+        var z = document.getElementsByClassName("scr-display")[0].id;
+        var scrZ = document.getElementsByClassName("scr-display")[0];
+        z++;
+        scrZ.setAttribute('id',z);
+        if (!imageUri) { // If the story has NO-image.
+          div.getElementsByClassName("storyImage")[0].innerHTML = '';
+        } else { // If the story has an image.
+          div.getElementsByClassName("storyImage")[0].innerHTML = LiveCards.IMAGE_PROGRESSBAR;
+          var image = document.createElement('img');
+          image.addEventListener('load', function() {
+            // Remove MDL Progress Bar when done!
+            div.getElementsByClassName("materialBar")[0].innerHTML = '';
+          }.bind(this));
+          this.setImageUrl(imageUri, image);
+          div.getElementsByClassName("storyImage")[0].appendChild(image);
+        }
+        if (!title) { // If the story has NO-title.
+          div.getElementsByClassName("title")[0].innerHTML = '';
+        } else { // If the story has a title.
+          var htmlTitle = title.replace(/\n/g, '<br>');
+          div.getElementsByClassName("title")[0].innerHTML = htmlTitle;
+        }
+        if (!content) { // It the story has NO-content.
+          div.getElementsByClassName("content")[0].innerHTML = '';
+        } else { // It the story has a content.
+          var htmlContent = content.replace(/\n/g, '<br>');
+          div.getElementsByClassName("content")[0].innerHTML = htmlContent;
+        }
       }
     }
   }
@@ -405,9 +437,17 @@ LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, im
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
       this.storyList0.insertBefore(div,this.storyList0.firstChild);
+      var z = document.getElementsByClassName("new-display")[0].id;
+      var newZ = document.getElementsByClassName("new-display")[0];
+      z++;
+      newZ.setAttribute('id',z);
     } else {
       if (!listOne) { // Continue only if there is -NO- story-list-1.
         this.storyList0.appendChild(div);
+        var z = document.getElementsByClassName("scr-display")[0].id;
+        var scrZ = document.getElementsByClassName("scr-display")[0];
+        z++;
+        scrZ.setAttribute('id',z);
       }
     }
   }
