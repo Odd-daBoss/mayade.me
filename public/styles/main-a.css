@@ -30,6 +30,16 @@ html, body {
 .mdl-textfield {
     width: 100%;
 }
+.mdl-card__title.mdl-card--expand {
+  margin-left: 3px;
+  margin-right: 3px;
+  padding-left: 0;
+  padding-right: 0;
+}
+.mdl-card__title-text {
+  padding-left: 16px;
+  padding-right: 16px;
+}
 .fixed-bottom {
     position: fixed;
     text-align: center;
@@ -45,10 +55,10 @@ html, body {
   display: inline-block;
   background-image: url('/images/profile_placeholder.svg');
   background-repeat: no-repeat;
-  width: 60px;
-  height: 60px;
-  background-size: 60px;
-  border-radius: 30px;
+  width: 56px;
+  height: 56px;
+  background-size: 56px;
+  border-radius: 28px;
 }
 .center-wrapper {
   padding: 1em;
@@ -65,7 +75,7 @@ img {
   top: 0;
 }
 #input-wrapper {
-  padding: 1em;
+  padding: 8px;
   margin: 3px;
 }
 #user-container #user-pic {

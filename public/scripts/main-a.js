@@ -5,7 +5,6 @@ function LiveCards() {
 
   // Shortcuts to DOM Elements.
   this.storyList0 = document.getElementById('story-list-0');
-  // this.submitButton = document.getElementById('submit');
   this.imageUpload = document.getElementById('image-upload');
   this.titleStory = document.getElementById('title-story');
   this.contentStory = document.getElementById('content-story');
@@ -19,16 +18,12 @@ function LiveCards() {
   this.nextButton = document.getElementById('next-button');
   this.prevButton = document.getElementById('prev-button');
 
-  // Toggle for the button.
-  // var buttonTogglingHandler = this.toggleButton.bind(this);
-
   this.storyForm.addEventListener('submit', this.saveStory.bind(this));
   this.addCard.addEventListener('click', this.addNewCard.bind(this));
   this.deleteCard.addEventListener('click', this.deleteNewCard.bind(this));
   this.signOutButton.addEventListener('click', this.signOut.bind(this));
   this.imageUpload.addEventListener('change', this.handleFileSelect.bind(this));
   this.nextButton.addEventListener('click', this.loopBook.bind(this));
-  this.prevButton.addEventListener('click', this.gotoBook.bind(this));
 
   this.initFirebase();
   this.initBook();
@@ -67,15 +62,6 @@ LiveCards.prototype.handleFileSelect = function(event) {
   }
 };
 
-LiveCards.prototype.gotoBook = function() {
-/*
-  var newIcon = document.getElementById('new-badge');
-  newIcon.setAttribute('data-badge', -1);
-  var loadPrev = document.getElementById('load-prev');
-  loadPrev.disabled = true;
-*/
-};
-
 //Loads the stories from the bookRef - n: Lot-Size, type: init or loop.
 LiveCards.prototype.initBook = function() {
   this.bookRef = this.database.ref('book-20170808165000'); // Reference to the database path.
@@ -84,14 +70,13 @@ LiveCards.prototype.initBook = function() {
     this.userName.textContent = 'Not signing in!';
   }
   // Initial Screen Display Trackers:
-  var newX = document.getElementsByClassName("new-display")[0];
-  newX.setAttribute('id',0); // Newly Added on-Screen Display Story = 0
-  var iniX = document.getElementsByClassName("ini-display")[0];
-  iniX.setAttribute('id',0); // Newly Added on-Screen Display Story = 0
+  var showTime = document.getElementsByClassName("now-display")[0];
+  var timeDate = Date.now();
+  showTime.setAttribute('id',timeDate);
   var scrX = document.getElementsByClassName("scr-display")[0];
   scrX.setAttribute('id',0); // on-Screen Display Story = 0
-  var delX = document.getElementsByClassName("del-display")[0];
-  delX.setAttribute('id',0); // Deleted on-Screen Display = 0
+  var newX = document.getElementsByClassName("new-display")[0];
+  newX.setAttribute('id',0); // Initial new-Story Display = 0
   // Initial loads the last number of stories and listen for new ones.
   var nextKey;
   var i = 0; // Set initial loop and initial story.
@@ -109,12 +94,12 @@ LiveCards.prototype.initBook = function() {
     }
     console.log('call initDisplay: ' + data.key);
     this.initDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date);
-    var newStory = document.getElementById('new-badge').getAttribute("data-badge");
+    /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
     newStory++;
     console.log('new story: ' + newStory);
     var newIcon = document.getElementById('new-badge');
     newIcon.setAttribute('data-badge', newStory);
-    var loadPrev = document.getElementById('load-prev');
+    var loadPrev = document.getElementById('load-prev'); */
   }.bind(this);
 
   var chgStory = function(data, prevKey) {
@@ -132,6 +117,10 @@ LiveCards.prototype.initBook = function() {
     var parent = document.getElementById(data.key).parentNode; // Get the correct parent HERE!!
     console.log('parent: ' + parent);
     parent.removeChild(child);
+    var y = document.getElementsByClassName("all-records")[0].id;
+    var scrY = document.getElementsByClassName("all-records")[0];
+    y--;
+    scrY.setAttribute('id',y);
     var z = document.getElementsByClassName("scr-display")[0].id;
     var scrZ = document.getElementsByClassName("scr-display")[0];
     z--;
@@ -166,7 +155,12 @@ LiveCards.prototype.loopBook = function() {
   if (!this.auth.currentUser) {
     this.userName.textContent = 'Not signing in!';
   }
-  // Load stories when button click.
+  var finTracker = document.getElementsByClassName("fin-records")[0].id; // Get finish-tracker.
+  if (finTracker == 1) { // Finished all records.
+    window.location.href = "#footer-div";
+    return;
+  }
+  // else - Load stories when button click.
   var n = 2; // Loads story of (n) = lot-size +1
   var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
   var keyTracker = document.getElementsByClassName("key-tracker")[0].id; // Get key-tracker.
@@ -191,12 +185,12 @@ LiveCards.prototype.loopBook = function() {
     var val = data.val();
     console.log('newStory ADDed: ' + data.key + ' PrevKEY: ' + prevKey);
     this.liveDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date);
-    var newStory = document.getElementById('new-badge').getAttribute("data-badge");
+    /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
     newStory++;
     console.log('new story: ' + newStory);
     var newIcon = document.getElementById('new-badge');
     newIcon.setAttribute('data-badge', newStory);
-    var loadPrev = document.getElementById('load-prev');
+    var loadPrev = document.getElementById('load-prev'); */
   }.bind(this);
 
   var chgStory = function(data, prevKey) {
@@ -230,16 +224,20 @@ LiveCards.prototype.loopBook = function() {
     var parent = document.getElementById(data.key).parentNode; // Get the correct parent HERE!!
     console.log('parent: ' + parent);
     parent.removeChild(child);
+    var y = document.getElementsByClassName("all-records")[0].id;
+    var scrY = document.getElementsByClassName("all-records")[0];
+    y--;
+    scrY.setAttribute('id',y);
     var z = document.getElementsByClassName("scr-display")[0].id;
     var scrZ = document.getElementsByClassName("scr-display")[0];
     z--;
     scrZ.setAttribute('id',z);
   });
-  var newStory = document.getElementById('new-badge').getAttribute("data-badge");
+  /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
   newStory--;
   console.log('new story(-): ' + newStory);
   var newIcon = document.getElementById('new-badge');
-  newIcon.setAttribute('data-badge', newStory);
+  newIcon.setAttribute('data-badge', newStory); */
 };
 
 // Template for Stories: A Story Template
@@ -251,16 +249,18 @@ LiveCards.STORY_TEMPLATE =
       '<div class="mdl-card__title mdl-card--expand">' +
         '<h1 class="title mdl-card__title-text mdl-color-text--blue-grey-300"></h1>' +
       '</div>' +
+      '<div class="mdl-card__actions">' +
+        '<div class="userPic"></div>' +
+        '<button class="coUser mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">person_add</i></button>' +
+      '</div>' +
       '<div class="mdl-card__supporting-text">' +
         '<p class="content"></p>' +
       '</div>' +
       '<div class="mdl-card__actions mdl-card--border">' +
-        '<div class="mdl-card__title mdl-card--expand">' +
-          '<div class="userPic"></div>' +
           '<span class="mdl-chip">' +
-            '<span class="dateTime mdl-chip__text"></span>' +
+            '<span class="dateTime mdl-chip__text" hidden></span>' +
+            '<span class="readTime mdl-chip__text"></span>' +
           '</span>' +
-        '</div>' +
         '<div class="mdl-layout-spacer"></div>' +
         '<button class="likeButton mdl-button mdl-button--icon mdl-button--colored mdl-badge" data-badge="3"><i class="material-icons">favorite</i></button>' +
         '<button class="shareButton mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">share</i></button>' +
@@ -301,30 +301,39 @@ LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, im
     div = container.firstChild;
     div.setAttribute('id', key);
     div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-    div.getElementsByClassName("dateTime")[0].innerHTML = date;
+    div.getElementsByClassName("readTime")[0].innerHTML = Date(date);
     var x = div.getElementsByClassName("likeButton")[0];
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
       this.storyList0.insertBefore(div,this.storyList0.firstChild);
-      if (firstDate == 0) {
-        var z = document.getElementsByClassName("ini-display")[0].id;
-        var newZ = document.getElementsByClassName("ini-display")[0];
-        z++;
-        newZ.setAttribute('id',z);
-      } else {
-        var z = document.getElementsByClassName("new-display")[0].id;
-        var newZ = document.getElementsByClassName("new-display")[0];
-        z++;
-        newZ.setAttribute('id',z);
-      }
-      console.log('storyDate : ' + storyDate + ' | firstDate : ' + firstDate);
     } else {
       this.storyList0.appendChild(div);
+    }
+    var showDate = document.getElementsByClassName("now-display")[0].id;
+    if (storyDate > showDate) {
+      var x = document.getElementsByClassName("all-records")[0].id;
+      var scrX = document.getElementsByClassName("all-records")[0];
+      x++;
+      scrX.setAttribute('id',x);
+      var chkSwitch = document.getElementById("scroll-switch");
+      if (chkSwitch.checked) {
+        console.log('switch checked!');
+        scroll(0,0);
+        var newBadge = document.getElementById('new-badge');
+        newBadge.setAttribute('data-badge','');
+      } else {
+        var y = document.getElementsByClassName("new-display")[0].id;
+        var scrY = document.getElementsByClassName("new-display")[0];
+        y++;
+        scrY.setAttribute('id',y);
+        var newBadge = document.getElementById('new-badge');
+        newBadge.setAttribute('data-badge', y);
+      }
+    } else {
       var z = document.getElementsByClassName("scr-display")[0].id;
       var scrZ = document.getElementsByClassName("scr-display")[0];
       z++;
       scrZ.setAttribute('id',z);
-      console.log('storyDate : ' + storyDate + ' + firstDate : ' + firstDate);
     }
   }
   if (!imageUri) { // If the story has NO-image.
@@ -356,12 +365,9 @@ LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, im
 // Displays a Story in the UI.
 LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, imageUri, date) {
   var m = document.getElementsByClassName("all-records")[0].id;
-  var n = document.getElementsByClassName("new-display")[0].id;
-  var i = document.getElementsByClassName("ini-display")[0].id;
-  var s = document.getElementsByClassName("scr-display")[0].id;
-  var d = document.getElementsByClassName("del-display")[0].id
+  var n = document.getElementsByClassName("scr-display")[0].id;
   var finish = document.getElementsByClassName("fin-records")[0].id;
-  var loadLeft = m - n - i - s - d;
+  var loadLeft = m - n;
   console.log('loadLeft: ' + loadLeft);
   if (loadLeft >= 0 && finish != 1) {
     if (loadLeft == 0) {
@@ -395,7 +401,7 @@ LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, im
         div = container.firstChild;
         div.setAttribute('id', key);
         div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-        div.getElementsByClassName("dateTime")[0].innerHTML = date;
+        div.getElementsByClassName("readTime")[0].innerHTML = Date(date);
         var x = div.getElementsByClassName("likeButton")[0];
         x.setAttribute('id', key+'.like');
         loopList.insertBefore(div,loopList.firstChild);
@@ -434,7 +440,6 @@ LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, im
 
 // Displays a Story in the UI.
 LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, imageUri, date) {
-  var listOne = document.getElementById("story-list-1"); // Check existing of story-list-1.
   console.log('live key* :' + key);
   console.log('live title* :' + title);
   var div = document.getElementById(key);
@@ -451,23 +456,39 @@ LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, im
     div = container.firstChild;
     div.setAttribute('id', key);
     div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-    div.getElementsByClassName("dateTime")[0].innerHTML = date;
+    div.getElementsByClassName("readTime")[0].innerHTML = Date(date);
     var x = div.getElementsByClassName("likeButton")[0];
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
       this.storyList0.insertBefore(div,this.storyList0.firstChild);
-      var z = document.getElementsByClassName("new-display")[0].id;
-      var newZ = document.getElementsByClassName("new-display")[0];
-      z++;
-      newZ.setAttribute('id',z);
     } else {
-      if (!listOne) { // Continue only if there is -NO- story-list-1.
-        this.storyList0.appendChild(div);
-        var z = document.getElementsByClassName("scr-display")[0].id;
-        var scrZ = document.getElementsByClassName("scr-display")[0];
-        z++;
-        scrZ.setAttribute('id',z);
+      this.storyList0.appendChild(div);
+    }
+    var showDate = document.getElementsByClassName("now-display")[0].id;
+    if (storyDate > showDate) {
+      var x = document.getElementsByClassName("all-records")[0].id;
+      var scrX = document.getElementsByClassName("all-records")[0];
+      x++;
+      scrX.setAttribute('id',x);
+      var chkSwitch = document.getElementById("scroll-switch");
+      if (chkSwitch.checked) {
+        console.log('switch checked!');
+        scroll(0,0);
+        var newBadge = document.getElementById('new-badge');
+        newBadge.setAttribute('data-badge','');
+      } else {
+        var y = document.getElementsByClassName("new-display")[0].id;
+        var scrY = document.getElementsByClassName("new-display")[0];
+        y++;
+        scrY.setAttribute('id',y);
+        var newBadge = document.getElementById('new-badge');
+        newBadge.setAttribute('data-badge', y);
       }
+    } else {
+      var z = document.getElementsByClassName("scr-display")[0].id;
+      var scrZ = document.getElementsByClassName("scr-display")[0];
+      z++;
+      scrZ.setAttribute('id',z);
     }
   }
   if (!imageUri) { // If the story has NO-image.
@@ -584,8 +605,12 @@ LiveCards.prototype.saveStory = function(event) {
           content: this.contentStory.value,
           date: d
         }).then(function(data) {
-          // Clear input new story card.
+          // Clear input new story card and (-1) this new story.
           this.deleteNewCard();
+          var z = document.getElementsByClassName("new-display")[0].id;
+          var scrZ = document.getElementsByClassName("new-display")[0];
+          z--;
+          scrZ.setAttribute('id',z);
 
           // Upload the image to Cloud Storage.
           var filePath = currentUser.uid + '/' + data.key + '/' + file.name;
@@ -614,8 +639,12 @@ LiveCards.prototype.saveStory = function(event) {
           content: this.contentStory.value,
           date: d
         }).then(function() {
-            // Clear input new story card.
+            // Clear input new story card and (-1) this new story.
             this.deleteNewCard();
+            var z = document.getElementsByClassName("new-display")[0].id;
+            var scrZ = document.getElementsByClassName("new-display")[0];
+            z--;
+            scrZ.setAttribute('id',z);
           }.bind(this)).catch(function(error) {
               console.error('Error writing new message to Firebase Database', error);
             });

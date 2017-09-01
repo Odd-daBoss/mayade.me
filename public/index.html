@@ -40,14 +40,14 @@
                 <label class="mdl-textfield__label" for="content-story">Story</label>
               </div><br />
             </div>
-            <div class="mdl-card__actions mdl-card--border center-wrapper">
+            <div class="mdl-card__actions mdl-card--border">
               <div id="user-container" class="mdl-card__title mdl-card--expand">
                 <div id="user-pic"></div>
                 <span class="mdl-chip">
                   <span id="user-name" class="mdl-chip__text"></span>
                 </span>
               </div>
-              <button id="submit" type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+              <button id="submit" type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
                 <i class="material-icons">send</i>
               </button>
             </div>
@@ -71,6 +71,7 @@
           <input type = "checkbox" id = "scroll-switch" class = "mdl-switch__input" checked>
         </label>
       </div>
+      <div id="new-badge" class="mdl-mini-footer__right-section material-icons mdl-badge" data-badge="">rate_review</div>
     </footer>
 
     <!-- Display fixed: Command and Load More buttons -->
@@ -95,14 +96,13 @@
           <button id="prev-button" class="mdl-button mdl-button--icon mdl-button--colored" onclick="location.href='#show-list';">
             <i class="material-icons">keyboard_arrow_up</i>
           </button>
-          <div id="new-badge" hidden class="material-icons mdl-badge" data-badge="-1">rate_review</div>
+
           <div id="key" class="key-tracker"></div>
           <div id="all" class="all-records"></div>
-          <div id="new" class="new-display"></div>
-          <div id="ini" class="ini-display"></div>
+          <div id="000" class="fin-records"></div>
+          <div id="now" class="now-display"></div>
           <div id="scr" class="scr-display"></div>
-          <div id="del" class="del-display"></div>
-          <div id="0" class="fin-records"></div>
+          <div id="new" class="new-display"></div>
         </span>
       </div>
     </div>

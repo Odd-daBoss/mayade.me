@@ -1,0 +1,63 @@
+[debug] [2017-09-01T12:24:16.597Z] ----------------------------------------------------------------------
+[debug] [2017-09-01T12:24:16.600Z] Command:       /usr/bin/nodejs /home/odd/.npm-global/bin/firebase deploy
+[debug] [2017-09-01T12:24:16.601Z] CLI Version:   3.9.2
+[debug] [2017-09-01T12:24:16.601Z] Platform:      linux
+[debug] [2017-09-01T12:24:16.601Z] Node Version:  v6.11.0
+[debug] [2017-09-01T12:24:16.601Z] Time:          Fri Sep 01 2017 19:24:16 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:16.601Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2017-09-01T12:24:16.614Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2017-09-01T12:24:16.615Z] > authorizing via signed-in user
+[debug] [2017-09-01T12:24:16.617Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2017-09-01T12:24:16.617Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token { refresh_token: '1/9LYya984XvXpN6lC6f4zgS6rFnfwqmps53Zq07LLzy4nUmlUN2pvKbVFCQ_JCL69',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Fri Sep 01 2017 19:24:16 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:16.947Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-01T12:24:16.952Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/live-feed-cards  
+ Fri Sep 01 2017 19:24:16 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:18.221Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-01T12:24:18.223Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/live-feed-cards/tokens  
+ Fri Sep 01 2017 19:24:18 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:19.157Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'live-feed-cards'...
+[info] 
+[info] i  deploying database, functions, hosting
+[info] ✔  database: rules ready to deploy.
+[debug] [2017-09-01T12:24:21.555Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "dependencies": {
+    "firebase-admin": "~4.2.1",
+    "firebase-functions": "^0.5.7"
+  },
+  "private": true
+}
+[info] i  functions: ensuring necessary APIs are enabled...
+[info] i  runtimeconfig: ensuring necessary APIs are enabled...
+[debug] [2017-09-01T12:24:21.557Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/cloudfunctions.googleapis.com/projectSettings/live-feed-cards?view=CONSUMER_VIEW  
+ Fri Sep 01 2017 19:24:21 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:21.557Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/runtimeconfig.googleapis.com/projectSettings/live-feed-cards?view=CONSUMER_VIEW  
+ Fri Sep 01 2017 19:24:21 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:23.323Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: all necessary APIs are enabled
+[debug] [2017-09-01T12:24:23.330Z] <<< HTTP RESPONSE 200
+[info] ✔  runtimeconfig: all necessary APIs are enabled
+[debug] [2017-09-01T12:24:23.332Z] >>> HTTP REQUEST GET https://appengine.googleapis.com/v1/apps/live-feed-cards  
+ Fri Sep 01 2017 19:24:23 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:23.332Z] >>> HTTP REQUEST GET https://apikeys.googleapis.com/v1/projects/live-feed-cards/apiKeys  
+ Fri Sep 01 2017 19:24:23 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:24.912Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-01T12:24:24.963Z] <<< HTTP RESPONSE 200
+[info] i  functions: preparing functions directory for uploading...
+[debug] [2017-09-01T12:24:26.149Z] >>> HTTP REQUEST GET https://runtimeconfig.googleapis.com/v1beta1/projects/live-feed-cards/configs  
+ Fri Sep 01 2017 19:24:26 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:26.797Z] <<< HTTP RESPONSE 200
+[info] i  hosting: preparing public directory for upload...
+[debug] [2017-09-01T12:24:27.150Z] >>> HTTP REQUEST PUT https://deploy.firebase.com/v1/hosting/live-feed-cards/uploads/-KsxOYzBfk9EP0jNQHBM?fileCount=4&message=  
+ Fri Sep 01 2017 19:24:27 GMT+0700 (+07)
+[debug] [2017-09-01T12:24:28.701Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-01T12:24:28.702Z] [hosting] .tgz uploaded successfully, waiting for extraction
