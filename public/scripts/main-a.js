@@ -17,6 +17,11 @@ function LiveCards() {
   this.storyForm = document.getElementById('story-form');
   this.nextButton = document.getElementById('next-button');
   this.prevButton = document.getElementById('prev-button');
+  this.titleStory = document.getElementById('title-story');
+  this.contentStory = document.getElementById('content-story');
+  this.quoteStory = document.getElementById('quote-story');
+  this.endingStory = document.getElementById('ending-story');
+  this.functionButton = document.getElementById('function-button');
 
   this.storyForm.addEventListener('submit', this.saveStory.bind(this));
   this.addCard.addEventListener('click', this.addNewCard.bind(this));
@@ -24,6 +29,14 @@ function LiveCards() {
   this.signOutButton.addEventListener('click', this.signOut.bind(this));
   this.imageUpload.addEventListener('change', this.handleFileSelect.bind(this));
   this.nextButton.addEventListener('click', this.loopBook.bind(this));
+  this.titleStory.addEventListener('focus', this.focusInput.bind(this));
+  this.titleStory.addEventListener('blur', this.blurInput.bind(this));
+  this.contentStory.addEventListener('focus', this.focusInput.bind(this));
+  this.contentStory.addEventListener('blur', this.blurInput.bind(this));
+  this.quoteStory.addEventListener('focus', this.focusInput.bind(this));
+  this.quoteStory.addEventListener('blur', this.blurInput.bind(this));
+  this.endingStory.addEventListener('focus', this.focusInput.bind(this));
+  this.endingStory.addEventListener('blur', this.blurInput.bind(this));
 
   this.initFirebase();
   this.initBook();
@@ -39,9 +52,18 @@ LiveCards.prototype.initFirebase = function() {
   this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
 };
 
+LiveCards.prototype.focusInput = function() {
+  this.functionButton.setAttribute('hidden', 'true');
+};
+
+LiveCards.prototype.blurInput = function() {
+  this.functionButton.removeAttribute('hidden');
+};
+
 LiveCards.prototype.handleFileSelect = function(event) {
   event.preventDefault();
   var file = event.target.files[0];
+  this.functionButton.setAttribute('hidden', 'true');
   // Only process image files.
   if (file.type.match('image.*')) {
 
@@ -93,7 +115,7 @@ LiveCards.prototype.initBook = function() {
       nxtkeyDiv.setAttribute('id','#'+data.key);
     }
     console.log('call initDisplay: ' + data.key);
-    this.initDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date);
+    this.initDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
     /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
     newStory++;
     console.log('new story: ' + newStory);
@@ -105,7 +127,7 @@ LiveCards.prototype.initBook = function() {
   var chgStory = function(data, prevKey) {
     var val = data.val();
     console.log('chgStory CHGed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.editDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date);
+    this.editDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
   }.bind(this);
 
   // Read the last (1) story and listen to: added * changed * removed.
@@ -178,13 +200,13 @@ LiveCards.prototype.loopBook = function() {
       nxtkeyDiv.setAttribute('id','#'+data.key);
     }
     console.log('call loadDisplay: ' + data.key);
-    this.loadDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date);
+    this.loadDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
   }.bind(this);
 
   var addStory = function(data, prevKey) {
     var val = data.val();
     console.log('newStory ADDed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.liveDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date);
+    this.liveDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
     /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
     newStory++;
     console.log('new story: ' + newStory);
@@ -196,7 +218,7 @@ LiveCards.prototype.loopBook = function() {
   var chgStory = function(data, prevKey) {
     var val = data.val();
     console.log('chgStory CHGed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.editDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date);
+    this.editDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
   }.bind(this);
 
   i++; // Read block of (n) stories.
@@ -283,7 +305,7 @@ LiveCards.IMAGE_PROGRESSBAR =
   '</div>';
 
 // Displays a Story in the UI.
-LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, imageUri, date) {
+LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, imageUri, date, ddmmyy) {
   console.log('key* :' + key);
   console.log('title* :' + title);
   var div = document.getElementById(key);
@@ -301,7 +323,8 @@ LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, im
     div = container.firstChild;
     div.setAttribute('id', key);
     div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-    div.getElementsByClassName("readTime")[0].innerHTML = Date(date);
+    div.getElementsByClassName("dateTime")[0].innerHTML = date;
+    div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
     var x = div.getElementsByClassName("likeButton")[0];
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
@@ -363,7 +386,7 @@ LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, im
 };
 
 // Displays a Story in the UI.
-LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, imageUri, date) {
+LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, imageUri, date, ddmmyy) {
   var m = document.getElementsByClassName("all-records")[0].id;
   var n = document.getElementsByClassName("scr-display")[0].id;
   var finish = document.getElementsByClassName("fin-records")[0].id;
@@ -401,7 +424,8 @@ LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, im
         div = container.firstChild;
         div.setAttribute('id', key);
         div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-        div.getElementsByClassName("readTime")[0].innerHTML = Date(date);
+        div.getElementsByClassName("dateTime")[0].innerHTML = date;
+        div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
         var x = div.getElementsByClassName("likeButton")[0];
         x.setAttribute('id', key+'.like');
         loopList.insertBefore(div,loopList.firstChild);
@@ -439,7 +463,7 @@ LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, im
 };
 
 // Displays a Story in the UI.
-LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, imageUri, date) {
+LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, imageUri, date, ddmmyy) {
   console.log('live key* :' + key);
   console.log('live title* :' + title);
   var div = document.getElementById(key);
@@ -456,7 +480,8 @@ LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, im
     div = container.firstChild;
     div.setAttribute('id', key);
     div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-    div.getElementsByClassName("readTime")[0].innerHTML = Date(date);
+    div.getElementsByClassName("dateTime")[0].innerHTML = date;
+    div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
     var x = div.getElementsByClassName("likeButton")[0];
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
@@ -518,7 +543,7 @@ LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, im
 };
 
 // Correcting Displayed Story in the UI.
-LiveCards.prototype.editDisplay = function(key, title, content, name, picUrl, imageUri, date) {
+LiveCards.prototype.editDisplay = function(key, title, content, name, picUrl, imageUri, date, ddmmyy) {
   var div = document.getElementById(key);
   if (div) {
     if (!imageUri) { // If the story has NO-image.
@@ -565,13 +590,14 @@ LiveCards.prototype.addNewCard = function() {
   }
 };
 
-//Delete the new card and Clear image and form!!
+//Delete the new card, clear image and form!!
 LiveCards.prototype.deleteNewCard = function() {
     fileDisplay.innerHTML = "";
     this.storyForm.reset();
     this.inputBlock.setAttribute('hidden', 'true');
     this.addCard.removeAttribute('hidden');
     this.signOutButton.setAttribute('hidden', 'true');
+    this.functionButton.removeAttribute('hidden');
 };
 
 // Sets the URL of the given img element with the URL of the image stored in Cloud Storage.
@@ -592,10 +618,12 @@ LiveCards.prototype.saveStory = function(event) {
     event.preventDefault();
     var file = document.getElementById('image-upload').files[0];
     if (file) {
-      // Check that the user uploaded image or entered a title or any content.
-      if (this.imageUpload.value || this.titleStory.value || this.contentStory.value) {
+      // Check that the user uploaded image or entered a title or any contents.
+      if (this.imageUpload.value || this.titleStory.value || this.contentStory.value
+          || this.quoteStory.value || this.endingStory.value) {
         var currentUser = this.auth.currentUser;
         var d = Date.now();
+        var e = Date();
         // Add a new message entry to the Firebase Database.
         this.bookRef = this.database.ref('book-20170808165000');
         this.bookRef.push({
@@ -603,7 +631,10 @@ LiveCards.prototype.saveStory = function(event) {
           photoUrl: currentUser.photoURL || '/images/profile_placeholder.svg',
           title: this.titleStory.value,
           content: this.contentStory.value,
-          date: d
+          quote: this.quoteStory.value,
+          ending: this.endingStory.value,
+          date: d,
+          ddmmyy: e
         }).then(function(data) {
           // Clear input new story card and (-1) this new story.
           this.deleteNewCard();
@@ -626,10 +657,12 @@ LiveCards.prototype.saveStory = function(event) {
         this.signOutButton.setAttribute('hidden', 'true');
       }
     } else {
-      // Check that the user uploaded image or entered a title or any content.
-      if (this.titleStory.value || this.contentStory.value) {
+      // If no image uploaded - check if user entered a title or any contents.
+      if (this.titleStory.value || this.contentStory.value || this.quoteStory.value
+          || this.endingStory.value) {
         var currentUser = this.auth.currentUser;
         var d = Date.now();
+        var e = Date();
         // Add a new message entry to the Firebase Database.
         this.bookRef = this.database.ref('book-20170808165000');
         this.bookRef.push({
@@ -637,7 +670,10 @@ LiveCards.prototype.saveStory = function(event) {
           photoUrl: currentUser.photoURL || '/images/profile_placeholder.svg',
           title: this.titleStory.value,
           content: this.contentStory.value,
-          date: d
+          quote: this.quoteStory.value,
+          ending: this.endingStory.value,
+          date: d,
+          ddmmyy: e
         }).then(function() {
             // Clear input new story card and (-1) this new story.
             this.deleteNewCard();
