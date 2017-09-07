@@ -115,7 +115,7 @@ LiveCards.prototype.initBook = function() {
       nxtkeyDiv.setAttribute('id','#'+data.key);
     }
     console.log('call initDisplay: ' + data.key);
-    this.initDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.initDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
     /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
     newStory++;
     console.log('new story: ' + newStory);
@@ -127,7 +127,7 @@ LiveCards.prototype.initBook = function() {
   var chgStory = function(data, prevKey) {
     var val = data.val();
     console.log('chgStory CHGed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.editDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.editDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
   }.bind(this);
 
   // Read the last (1) story and listen to: added * changed * removed.
@@ -165,6 +165,23 @@ LiveCards.prototype.initBook = function() {
       }
     });
   }
+  var scrollLoop = function(evt) {
+    console.log(document.body.scrollHeight + ' - ' + document.body.clientHeight + ' - ' +
+    document.body.scrollTop + ' - ' + document.body.offsetHeight + ' | ' + window.pageYOffset);
+    if (document.body.scrollHeight - document.body.scrollTop == window.pageYOffset) {
+      console.log('loopBook!');
+      this.loopBook();
+    }
+  }
+  window.addEventListener("scroll", scrollLoop, true);
+};
+
+LiveCards.prototype.displayLoop = function() {
+  console.log('scroll window!');
+  if (window.scrollTop == document.body.clientWidth - window.innerHeight) {
+    console.log('loopBook!');
+    this.loopBook();
+  }
 };
 
 LiveCards.prototype.loopBook = function() {
@@ -200,13 +217,13 @@ LiveCards.prototype.loopBook = function() {
       nxtkeyDiv.setAttribute('id','#'+data.key);
     }
     console.log('call loadDisplay: ' + data.key);
-    this.loadDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.loadDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
   }.bind(this);
 
   var addStory = function(data, prevKey) {
     var val = data.val();
     console.log('newStory ADDed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.liveDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.liveDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
     /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
     newStory++;
     console.log('new story: ' + newStory);
@@ -218,7 +235,7 @@ LiveCards.prototype.loopBook = function() {
   var chgStory = function(data, prevKey) {
     var val = data.val();
     console.log('chgStory CHGed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.editDisplay(data.key, val.title, val.content, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.editDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
   }.bind(this);
 
   i++; // Read block of (n) stories.
@@ -277,6 +294,11 @@ LiveCards.STORY_TEMPLATE =
       '</div>' +
       '<div class="mdl-card__supporting-text">' +
         '<p class="content"></p>' +
+        '<div class="w3-panel w3-leftbar">' +
+        '<p><i class="fa fa-quote-right w3-xlarge"></i><br>' +
+        '<i class="w3-serif w3-large quote"></i></p>' +
+        '</div>' +
+        '<p class="ending"></p>' +
       '</div>' +
       '<div class="mdl-card__actions mdl-card--border">' +
           '<span class="mdl-chip">' +
@@ -305,7 +327,7 @@ LiveCards.IMAGE_PROGRESSBAR =
   '</div>';
 
 // Displays a Story in the UI.
-LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, imageUri, date, ddmmyy) {
+LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
   console.log('key* :' + key);
   console.log('title* :' + title);
   var div = document.getElementById(key);
@@ -377,16 +399,28 @@ LiveCards.prototype.initDisplay = function(key, title, content, name, picUrl, im
     var htmlTitle = title.replace(/\n/g, '<br>');
     div.getElementsByClassName("title")[0].innerHTML = htmlTitle;
   }
-  if (!content) { // It the story has NO-content.
+  if (!content) { // If the story has NO-content.
     div.getElementsByClassName("content")[0].innerHTML = '';
-  } else { // It the story has a content.
+  } else { // If the story has a content.
     var htmlContent = content.replace(/\n/g, '<br>');
     div.getElementsByClassName("content")[0].innerHTML = htmlContent;
+  }
+  if (!quote) { // If the story has NO-quote.
+    div.getElementsByClassName("w3-panel")[0].setAttribute('hidden', 'true');
+  } else { // If the story has a quote.
+    var htmlQuote = quote.replace(/\n/g, '<br>');
+    div.getElementsByClassName("quote")[0].innerHTML = htmlQuote;
+  }
+  if (!ending) { // If the story has NO-ending.
+    div.getElementsByClassName("ending")[0].innerHTML = '';
+  } else { // If the story has a ending.
+    var htmlEnding = ending.replace(/\n/g, '<br>');
+    div.getElementsByClassName("ending")[0].innerHTML = htmlEnding;
   }
 };
 
 // Displays a Story in the UI.
-LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, imageUri, date, ddmmyy) {
+LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
   var m = document.getElementsByClassName("all-records")[0].id;
   var n = document.getElementsByClassName("scr-display")[0].id;
   var finish = document.getElementsByClassName("fin-records")[0].id;
@@ -457,13 +491,25 @@ LiveCards.prototype.loadDisplay = function(key, title, content, name, picUrl, im
           var htmlContent = content.replace(/\n/g, '<br>');
           div.getElementsByClassName("content")[0].innerHTML = htmlContent;
         }
+        if (!quote) { // If the story has NO-quote.
+          div.getElementsByClassName("w3-panel")[0].setAttribute('hidden', 'true');
+        } else { // If the story has a quote.
+          var htmlQuote = quote.replace(/\n/g, '<br>');
+          div.getElementsByClassName("quote")[0].innerHTML = htmlQuote;
+        }
+        if (!ending) { // If the story has NO-ending.
+          div.getElementsByClassName("ending")[0].innerHTML = '';
+        } else { // If the story has a ending.
+          var htmlEnding = ending.replace(/\n/g, '<br>');
+          div.getElementsByClassName("ending")[0].innerHTML = htmlEnding;
+        }
       }
     }
   }
 };
 
 // Displays a Story in the UI.
-LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, imageUri, date, ddmmyy) {
+LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
   console.log('live key* :' + key);
   console.log('live title* :' + title);
   var div = document.getElementById(key);
@@ -540,10 +586,22 @@ LiveCards.prototype.liveDisplay = function(key, title, content, name, picUrl, im
     var htmlContent = content.replace(/\n/g, '<br>');
     div.getElementsByClassName("content")[0].innerHTML = htmlContent;
   }
+  if (!quote) { // If the story has NO-quote.
+    div.getElementsByClassName("w3-panel")[0].setAttribute('hidden', 'true');
+  } else { // If the story has a quote.
+    var htmlQuote = quote.replace(/\n/g, '<br>');
+    div.getElementsByClassName("quote")[0].innerHTML = htmlQuote;
+  }
+  if (!ending) { // If the story has NO-ending.
+    div.getElementsByClassName("ending")[0].innerHTML = '';
+  } else { // If the story has a ending.
+    var htmlEnding = ending.replace(/\n/g, '<br>');
+    div.getElementsByClassName("ending")[0].innerHTML = htmlEnding;
+  }
 };
 
 // Correcting Displayed Story in the UI.
-LiveCards.prototype.editDisplay = function(key, title, content, name, picUrl, imageUri, date, ddmmyy) {
+LiveCards.prototype.editDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
   var div = document.getElementById(key);
   if (div) {
     if (!imageUri) { // If the story has NO-image.
@@ -569,6 +627,18 @@ LiveCards.prototype.editDisplay = function(key, title, content, name, picUrl, im
     } else { // It the story has a content.
       var htmlContent = content.replace(/\n/g, '<br>');
       div.getElementsByClassName("content")[0].innerHTML = htmlContent;
+    }
+    if (!quote) { // If the story has NO-quote.
+      div.getElementsByClassName("w3-panel")[0].setAttribute('hidden', 'true');
+    } else { // If the story has a quote.
+      var htmlQuote = quote.replace(/\n/g, '<br>');
+      div.getElementsByClassName("quote")[0].innerHTML = htmlQuote;
+    }
+    if (!ending) { // If the story has NO-ending.
+      div.getElementsByClassName("ending")[0].innerHTML = '';
+    } else { // If the story has a ending.
+      var htmlEnding = ending.replace(/\n/g, '<br>');
+      div.getElementsByClassName("ending")[0].innerHTML = htmlEnding;
     }
   }
 };

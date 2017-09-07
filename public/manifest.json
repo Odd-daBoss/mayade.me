@@ -1,0 +1,13 @@
+{
+	"short_name": "SDEEs",
+	"name": "SDEEs",
+	"icons": [
+	{	"src": "images/logo144x144.png",
+		"sizes": "144x144",
+		"type": "image/png"
+	}],
+	"start_url": "/?utm_source=homescreen",
+	"background_color": "#000",
+	"theme_color": "#536878",
+	"display": "standalone"
+}
