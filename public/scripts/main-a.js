@@ -102,7 +102,7 @@ LiveCards.prototype.initBook = function() {
   // Initial loads the last number of stories and listen for new ones.
   var nextKey;
   var i = 0; // Set initial loop and initial story.
-  var n = 1; // Set initial display lot.
+  var n = 5; // Set initial display lot.
   var keyTrk = document.getElementById('key'); // Get loop key-tracker.
   var iniStory = function(data, prevKey) {
     var val = data.val();
@@ -165,26 +165,20 @@ LiveCards.prototype.initBook = function() {
       }
     });
   }
-  var scrollLoop = function(evt) {
-    console.log(document.body.scrollHeight + ' - ' + document.body.clientHeight + ' - ' +
-    document.body.scrollTop + ' - ' + document.body.offsetHeight + ' | ' + window.pageYOffset);
-    if (document.body.scrollHeight - document.body.scrollTop == window.pageYOffset) {
-      console.log('loopBook!');
-      this.loopBook();
-    }
-  }
-  window.addEventListener("scroll", scrollLoop, true);
+  window.addEventListener("scroll", this.scrollLoop.bind(this), true);
 };
 
-LiveCards.prototype.displayLoop = function() {
-  console.log('scroll window!');
-  if (window.scrollTop == document.body.clientWidth - window.innerHeight) {
+LiveCards.prototype.scrollLoop = function(evt) {
+  console.log(document.body.scrollHeight + ' - ' + window.innerHeight + ' | ' +
+  document.body.scrollTop + ' * ' + document.documentElement.offsetHeight);
+  if (document.body.scrollTop == document.body.scrollHeight - window.innerHeight) {
     console.log('loopBook!');
     this.loopBook();
   }
 };
 
 LiveCards.prototype.loopBook = function() {
+  console.log('loop started!');
   var nextKey;
   // Reference to the /messages/ database path.
   this.bookRef = this.database.ref('book-20170808165000');
@@ -200,7 +194,7 @@ LiveCards.prototype.loopBook = function() {
     return;
   }
   // else - Load stories when button click.
-  var n = 2; // Loads story of (n) = lot-size +1
+  var n = 6; // Loads story of (n) = lot-size +1
   var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
   var keyTracker = document.getElementsByClassName("key-tracker")[0].id; // Get key-tracker.
   var keyID = keyTracker.substr(1);
