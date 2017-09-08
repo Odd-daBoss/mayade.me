@@ -20,7 +20,7 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,500,400italic,700,700italic' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.light_green-red.min.css" />
     <script src="//storage.googleapis.com/code.getmdl.io/1.0.1/material.min.js"></script>
-
+<!--
 		<style>
   		body {
       	font-family: 'Dosis';font-size: 12px;
@@ -38,6 +38,7 @@
   		}
   		}
 		</style>
+-->
 		<link rel="manifest" href="/manifest.json">
     <!-- Applied styles -->
     <link rel="stylesheet" href="./styles/main-a.css">
@@ -98,16 +99,10 @@
 
     <!-- Begin of the card(s) -->
     <div id="show-list">
-      <div id="story-list-0"></div>
-    </div>
-    <footer class = "mdl-mini-footer">
-      <div id="footer-div" class="mdl-mini-footer__left-section">
-        <label class = "mdl-switch mdl-js-switch mdl-js-ripple-effect" for = "scroll-switch">
-          <input type = "checkbox" id = "scroll-switch" class = "mdl-switch__input" checked>
-        </label>
+      <div id="story-list-0">
+        <div id="toast">Loading more.</div>
       </div>
-      <div id="new-badge" class="mdl-mini-footer__right-section material-icons mdl-badge" data-badge="">import_contacts</div>
-    </footer>
+    </div>
 
     <!-- Display fixed: Command and Load More buttons -->
     <div id="function-button" class="fixed-bottom">
@@ -141,6 +136,15 @@
         </span>
       </div>
     </div>
+
+    <footer class = "mdl-mini-footer">
+      <div id = "footer-div" class="mdl-mini-footer__left-section">
+        <label class = "mdl-switch mdl-js-switch mdl-js-ripple-effect" for = "scroll-switch">
+          <input type = "checkbox" id = "scroll-switch" class = "mdl-switch__input" checked>
+        </label>
+      </div>
+      <div id="new-badge" hidden class="mdl-mini-footer__right-section material-icons mdl-badge" data-badge="">import_contacts</div>
+    </footer>
 
     <!-- update the version number as needed -->
     <script defer src="/__/firebase/4.3.0/firebase-app.js"></script>

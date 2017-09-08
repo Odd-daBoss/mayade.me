@@ -22,6 +22,7 @@ function LiveCards() {
   this.quoteStory = document.getElementById('quote-story');
   this.endingStory = document.getElementById('ending-story');
   this.functionButton = document.getElementById('function-button');
+  this.scrollSwitch = document.getElementById('scroll-switch');
 
   this.storyForm.addEventListener('submit', this.saveStory.bind(this));
   this.addCard.addEventListener('click', this.addNewCard.bind(this));
@@ -37,6 +38,7 @@ function LiveCards() {
   this.quoteStory.addEventListener('blur', this.blurInput.bind(this));
   this.endingStory.addEventListener('focus', this.focusInput.bind(this));
   this.endingStory.addEventListener('blur', this.blurInput.bind(this));
+  this.scrollSwitch.addEventListener('change', this.modeSwitch.bind(this));
 
   this.initFirebase();
   this.initBook();
@@ -58,6 +60,23 @@ LiveCards.prototype.focusInput = function() {
 
 LiveCards.prototype.blurInput = function() {
   this.functionButton.removeAttribute('hidden');
+};
+
+LiveCards.prototype.showToast = function() {
+  var toaster = document.getElementById('toast');
+  toaster.className = "show";
+  setTimeout(function() {
+    toaster.className = toaster.className.replace("show", "");
+  }, 2300);
+};
+
+LiveCards.prototype.modeSwitch = function() {
+  if (this.scrollSwitch.checked) {
+    console.log("TEST checked!");
+    this.functionButton.removeAttribute('hidden');
+  } else {
+    this.functionButton.setAttribute('hidden', 'true');
+  }
 };
 
 LiveCards.prototype.handleFileSelect = function(event) {
@@ -102,7 +121,7 @@ LiveCards.prototype.initBook = function() {
   // Initial loads the last number of stories and listen for new ones.
   var nextKey;
   var i = 0; // Set initial loop and initial story.
-  var n = 5; // Set initial display lot.
+  var n = 3; // Set initial display lot.
   var keyTrk = document.getElementById('key'); // Get loop key-tracker.
   var iniStory = function(data, prevKey) {
     var val = data.val();
@@ -116,12 +135,6 @@ LiveCards.prototype.initBook = function() {
     }
     console.log('call initDisplay: ' + data.key);
     this.initDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
-    /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
-    newStory++;
-    console.log('new story: ' + newStory);
-    var newIcon = document.getElementById('new-badge');
-    newIcon.setAttribute('data-badge', newStory);
-    var loadPrev = document.getElementById('load-prev'); */
   }.bind(this);
 
   var chgStory = function(data, prevKey) {
@@ -173,7 +186,8 @@ LiveCards.prototype.scrollLoop = function(evt) {
   document.body.scrollTop + ' * ' + document.documentElement.offsetHeight);
   if (document.body.scrollTop == document.body.scrollHeight - window.innerHeight) {
     console.log('loopBook!');
-    this.loopBook();
+    this.showToast();
+    setTimeout(this.loopBook.bind(this), 1000);
   }
 };
 
@@ -190,11 +204,14 @@ LiveCards.prototype.loopBook = function() {
   }
   var finTracker = document.getElementsByClassName("fin-records")[0].id; // Get finish-tracker.
   if (finTracker == 1) { // Finished all records.
+    var toaster = document.getElementById('toast');
+    toaster.innerHTML = "The End."
     window.location.href = "#footer-div";
     return;
   }
   // else - Load stories when button click.
-  var n = 6; // Loads story of (n) = lot-size +1
+  // *this.showToast();
+  var n = 4; // Loads story of (n) = lot-size +1
   var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
   var keyTracker = document.getElementsByClassName("key-tracker")[0].id; // Get key-tracker.
   var keyID = keyTracker.substr(1);
@@ -218,12 +235,6 @@ LiveCards.prototype.loopBook = function() {
     var val = data.val();
     console.log('newStory ADDed: ' + data.key + ' PrevKEY: ' + prevKey);
     this.liveDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
-    /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
-    newStory++;
-    console.log('new story: ' + newStory);
-    var newIcon = document.getElementById('new-badge');
-    newIcon.setAttribute('data-badge', newStory);
-    var loadPrev = document.getElementById('load-prev'); */
   }.bind(this);
 
   var chgStory = function(data, prevKey) {
@@ -266,11 +277,6 @@ LiveCards.prototype.loopBook = function() {
     z--;
     scrZ.setAttribute('id',z);
   });
-  /* var newStory = document.getElementById('new-badge').getAttribute("data-badge");
-  newStory--;
-  console.log('new story(-): ' + newStory);
-  var newIcon = document.getElementById('new-badge');
-  newIcon.setAttribute('data-badge', newStory); */
 };
 
 // Template for Stories: A Story Template
@@ -305,7 +311,7 @@ LiveCards.STORY_TEMPLATE =
       '</div>' +
       '<div class="mdl-card__menu">' +
         '<button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">' +
-          '<i class="material-icons">clear</i>' +
+          '<i class="material-icons">whatshot</i>' +
         '</button>' +
       '</div>' +
     '</div>' +
@@ -789,8 +795,9 @@ LiveCards.prototype.onAuthStateChanged = function(user) {
     this.userName.textContent = userName;
     this.addCard.removeAttribute('hidden');
     var buttonMain = document.getElementById('icon-main');
-    if (buttonMain.innerHTML == "lock") buttonMain.innerHTML = "create";
-
+    if (buttonMain.innerHTML == "lock") {
+      buttonMain.innerHTML = "create";
+    }
     // Show sign-out button and input new card form.
     // this.signOutButton.removeAttribute('hidden');
     // this.inputBlock.removeAttribute('hidden');
