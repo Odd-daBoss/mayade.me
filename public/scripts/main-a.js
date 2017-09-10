@@ -23,6 +23,7 @@ function LiveCards() {
   this.endingStory = document.getElementById('ending-story');
   this.functionButton = document.getElementById('function-button');
   this.scrollSwitch = document.getElementById('scroll-switch');
+  this.toaster = document.getElementById('bottom-toast');
 
   this.storyForm.addEventListener('submit', this.saveStory.bind(this));
   this.addCard.addEventListener('click', this.addNewCard.bind(this));
@@ -38,7 +39,7 @@ function LiveCards() {
   this.quoteStory.addEventListener('blur', this.blurInput.bind(this));
   this.endingStory.addEventListener('focus', this.focusInput.bind(this));
   this.endingStory.addEventListener('blur', this.blurInput.bind(this));
-  this.scrollSwitch.addEventListener('change', this.modeSwitch.bind(this));
+  this.scrollSwitch.addEventListener('change', this.scrollMode.bind(this));
 
   this.initFirebase();
   this.initBook();
@@ -62,15 +63,15 @@ LiveCards.prototype.blurInput = function() {
   this.functionButton.removeAttribute('hidden');
 };
 
-LiveCards.prototype.showToast = function() {
-  var toaster = document.getElementById('toast');
-  toaster.className = "show";
+LiveCards.prototype.bottomToast = function() {
+  var getToaster = this.toaster;
+  getToaster.className = "show";
   setTimeout(function() {
-    toaster.className = toaster.className.replace("show", "");
+    getToaster.className = getToaster.className.replace("show", "");
   }, 2300);
 };
 
-LiveCards.prototype.modeSwitch = function() {
+LiveCards.prototype.scrollMode = function() {
   if (this.scrollSwitch.checked) {
     console.log("TEST checked!");
     this.functionButton.removeAttribute('hidden');
@@ -185,9 +186,28 @@ LiveCards.prototype.scrollLoop = function(evt) {
   console.log(document.body.scrollHeight + ' - ' + window.innerHeight + ' | ' +
   document.body.scrollTop + ' * ' + document.documentElement.offsetHeight);
   if (document.body.scrollTop == document.body.scrollHeight - window.innerHeight) {
+    var finTracker = document.getElementsByClassName("fin-records")[0].id; // Get finish-tracker.
+    console.log('finish-tracker: ' + finTracker);
     console.log('loopBook!');
-    this.showToast();
-    setTimeout(this.loopBook.bind(this), 1000);
+    if (!this.scrollSwitch.checked) {
+      if (finTracker == 1 && this.toaster.innerHTML == "Loading more.") {
+        console.log('1+Loading more.');
+        this.toaster.innerHTML = "The End.";
+      }
+      this.bottomToast();
+      console.log(this.toaster.innerHTML)
+      setTimeout(this.loopBook.bind(this), 1000);
+    } else {
+      if (finTracker == 1 && this.toaster.innerHTML == "Loading more.") {
+        console.log('1+Loading more.');
+        this.toaster.innerHTML = "The End.";
+      }
+      if (finTracker == 1 && this.toaster.innerHTML == "The End.") {
+        console.log('1+The End.');
+        this.bottomToast();
+        setTimeout(this.loopBook.bind(this), 1000);
+      }
+    }
   }
 };
 
@@ -204,13 +224,13 @@ LiveCards.prototype.loopBook = function() {
   }
   var finTracker = document.getElementsByClassName("fin-records")[0].id; // Get finish-tracker.
   if (finTracker == 1) { // Finished all records.
-    var toaster = document.getElementById('toast');
-    toaster.innerHTML = "The End."
+    if (this.toaster.innerHTML != "The End.") {
+      this.toaster.innerHTML = "The End.";
+    }
     window.location.href = "#footer-div";
     return;
   }
   // else - Load stories when button click.
-  // *this.showToast();
   var n = 4; // Loads story of (n) = lot-size +1
   var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
   var keyTracker = document.getElementsByClassName("key-tracker")[0].id; // Get key-tracker.
@@ -360,20 +380,6 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
       var scrX = document.getElementsByClassName("all-records")[0];
       x++;
       scrX.setAttribute('id',x);
-      var chkSwitch = document.getElementById("scroll-switch");
-      if (chkSwitch.checked) {
-        console.log('switch checked!');
-        scroll(0,0);
-        var newBadge = document.getElementById('new-badge');
-        newBadge.setAttribute('data-badge','');
-      } else {
-        var y = document.getElementsByClassName("new-display")[0].id;
-        var scrY = document.getElementsByClassName("new-display")[0];
-        y++;
-        scrY.setAttribute('id',y);
-        var newBadge = document.getElementById('new-badge');
-        newBadge.setAttribute('data-badge', y);
-      }
     } else {
       var z = document.getElementsByClassName("scr-display")[0].id;
       var scrZ = document.getElementsByClassName("scr-display")[0];
@@ -541,20 +547,6 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
       var scrX = document.getElementsByClassName("all-records")[0];
       x++;
       scrX.setAttribute('id',x);
-      var chkSwitch = document.getElementById("scroll-switch");
-      if (chkSwitch.checked) {
-        console.log('switch checked!');
-        scroll(0,0);
-        var newBadge = document.getElementById('new-badge');
-        newBadge.setAttribute('data-badge','');
-      } else {
-        var y = document.getElementsByClassName("new-display")[0].id;
-        var scrY = document.getElementsByClassName("new-display")[0];
-        y++;
-        scrY.setAttribute('id',y);
-        var newBadge = document.getElementById('new-badge');
-        newBadge.setAttribute('data-badge', y);
-      }
     } else {
       var z = document.getElementsByClassName("scr-display")[0].id;
       var scrZ = document.getElementsByClassName("scr-display")[0];

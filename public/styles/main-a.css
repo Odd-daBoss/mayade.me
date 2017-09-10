@@ -1,19 +1,7 @@
-html {
-  height: 100%;
-  box-sizing: border-box;
-}
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-body {
+html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
   margin: 0;
   padding: 0;
-}
-.demo-layout-waterfall .mdl-layout__header-row .mdl-navigation__link:last-of-type  {
-  padding-right: 0;
 }
 .mdl-grid {
     max-width: 600px;
@@ -83,39 +71,39 @@ body {
   margin: 3px;
   text-align: center;
 }
-#toast {
+#bottom-toast {
     visibility: hidden;
-    min-width: 250px;
-    margin-left: -125px;
+    min-width: 150px;
+    margin-left: -75px;
     background-color: #808080;
     color: #fff;
     text-align: center;
     border-radius: 30px;
-    padding: 16px;
+    padding: 8px;
     position: fixed;
     z-index: 100;
     left: 50%;
     bottom: 90px;
     font-size: 15px;
 }
-#toast.show {
+#bottom-toast.show {
     visibility: visible;
-    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.0s;
-    animation: fadein 0.5s, fadeout 0.5s 2.0s;
+    -webkit-animation: bottomfadein 0.5s, bottomfadeout 0.5s 2.0s;
+    animation: bottomfadein 0.5s, bottomfadeout 0.5s 2.0s;
 }
-@-webkit-keyframes fadein {
+@-webkit-keyframes bottomfadein {
     from {bottom: 0; opacity: 0;}
     to {bottom: 90px; opacity: 1;}
 }
-@keyframes fadein {
+@keyframes bottomfadein {
     from {bottom: 0; opacity: 0;}
     to {bottom: 90px; opacity: 1;}
 }
-@-webkit-keyframes fadeout {
+@-webkit-keyframes bottomfadeout {
     from {bottom: 90px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
 }
-@keyframes fadeout {
+@keyframes bottomfadeout {
     from {bottom: 90px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
 }
