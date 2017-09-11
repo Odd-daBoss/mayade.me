@@ -37,8 +37,8 @@ html, body {
   padding-right: 0;
 }
 .mdl-card__title-text {
-  padding-left: 16px;
-  padding-right: 16px;
+/*  padding-left: 16px;
+  padding-right: 16px; */
 }
 .mdl-layout__content {
   flex: 1 0 auto;
@@ -56,20 +56,17 @@ html, body {
 .none {
   display: none;
 }
-.userPic {
-  position: relative;
-  display: inline-block;
-  background-image: url('./images/profile_placeholder.svg');
+.user-pic, #profile-pic {
+  background-image: url('./../images/profile_placeholder.svg');
   background-repeat: no-repeat;
-  width: 56px;
-  height: 56px;
-  background-size: 56px;
-  border-radius: 28px;
+  background-size: cover;
 }
-.center-wrapper {
-  padding: 1em;
-  margin: 3px;
+#loop-more {
   text-align: center;
+}
+#loop-more.add-padding {
+  text-align: center;
+  padding: 7px;
 }
 #bottom-toast {
     visibility: hidden;
@@ -81,9 +78,9 @@ html, body {
     border-radius: 30px;
     padding: 8px;
     position: fixed;
-    z-index: 100;
+    z-index: 999;
     left: 50%;
-    bottom: 90px;
+    bottom: 105px;
     font-size: 15px;
 }
 #bottom-toast.show {
@@ -93,18 +90,18 @@ html, body {
 }
 @-webkit-keyframes bottomfadein {
     from {bottom: 0; opacity: 0;}
-    to {bottom: 90px; opacity: 1;}
+    to {bottom: 105px; opacity: 1;}
 }
 @keyframes bottomfadein {
     from {bottom: 0; opacity: 0;}
-    to {bottom: 90px; opacity: 1;}
+    to {bottom: 105px; opacity: 1;}
 }
 @-webkit-keyframes bottomfadeout {
-    from {bottom: 90px; opacity: 1;}
+    from {bottom: 105px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
 }
 @keyframes bottomfadeout {
-    from {bottom: 90px; opacity: 1;}
+    from {bottom: 105px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
 }
 img {
@@ -120,17 +117,7 @@ img {
   padding: 8px;
   margin: 3px;
 }
-#user-container #user-pic {
+#enjoy-reading {
   position: relative;
-  display: inline-block;
-  background-image: url('./images/profile_placeholder.svg');
-  background-repeat: no-repeat;
-  width: 60px;
-  height: 60px;
-  background-size: 60px;
-  border-radius: 30px;
-}
-#footer-div {
-  position: relative;
-  z-index: 999;
+  z-index: 900;
 }

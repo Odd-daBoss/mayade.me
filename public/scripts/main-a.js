@@ -8,9 +8,10 @@ function LiveCards() {
   this.imageUpload = document.getElementById('image-upload');
   this.titleStory = document.getElementById('title-story');
   this.contentStory = document.getElementById('content-story');
-  this.userPic = document.getElementById('user-pic');
-  this.userName = document.getElementById('user-name');
+  this.profilePic = document.getElementById('profile-pic');
+  this.profileName = document.getElementById('profile-name');
   this.signOutButton = document.getElementById('sign-out');
+  this.profileChip = document.getElementById('profile-chip');
   this.addCard = document.getElementById('add-card');
   this.deleteCard = document.getElementById('del-card');
   this.inputBlock = document.getElementById('input-block');
@@ -23,6 +24,8 @@ function LiveCards() {
   this.endingStory = document.getElementById('ending-story');
   this.functionButton = document.getElementById('function-button');
   this.scrollSwitch = document.getElementById('scroll-switch');
+  this.imageSwitch = document.getElementById('image-switch');
+  this.storySwitch = document.getElementById('story-switch');
   this.toaster = document.getElementById('bottom-toast');
 
   this.storyForm.addEventListener('submit', this.saveStory.bind(this));
@@ -40,6 +43,8 @@ function LiveCards() {
   this.endingStory.addEventListener('focus', this.focusInput.bind(this));
   this.endingStory.addEventListener('blur', this.blurInput.bind(this));
   this.scrollSwitch.addEventListener('change', this.scrollMode.bind(this));
+  this.imageSwitch.addEventListener('change', this.imageMode.bind(this));
+  this.storySwitch.addEventListener('change', this.storyMode.bind(this));
 
   this.initFirebase();
   this.initBook();
@@ -73,10 +78,32 @@ LiveCards.prototype.bottomToast = function() {
 
 LiveCards.prototype.scrollMode = function() {
   if (this.scrollSwitch.checked) {
-    console.log("TEST checked!");
+    console.log("SCROLL checked!");
     this.functionButton.removeAttribute('hidden');
   } else {
     this.functionButton.setAttribute('hidden', 'true');
+  }
+};
+
+LiveCards.prototype.imageMode = function() {
+  var imageIcon = document.getElementById('image-icon');
+  if (this.imageSwitch.checked) {
+    console.log("IMG checked!");
+    imageIcon.innerHTML = "camera_alt";
+  } else {
+    console.log("IMG un-checked!");
+    imageIcon.innerHTML = "image_upload";
+  }
+};
+
+LiveCards.prototype.storyMode = function () {
+  var storyIcon = document.getElementById('story-icon');
+  if (this.storySwitch.checked) {
+    console.log("STORY checked!");
+    storyIcon.innerHTML = "near_me";
+  } else {
+    console.log("STORY un-checked!");
+    storyIcon.innerHTML = "send";
   }
 };
 
@@ -109,7 +136,7 @@ LiveCards.prototype.initBook = function() {
   this.bookRef = this.database.ref('book-20170808165000'); // Reference to the database path.
   this.bookRef.off(); // Make sure we remove all previous listeners.
   if (!this.auth.currentUser) { // Clear User Name - if not signing in!
-    this.userName.textContent = 'Not signing in!';
+    this.profileName.textContent = 'Not signing in!';
   }
   // Initial Screen Display Trackers:
   var showTime = document.getElementsByClassName("now-display")[0];
@@ -220,14 +247,19 @@ LiveCards.prototype.loopBook = function() {
   this.bookRef.off();
   // Clear User Name - if not signing in!
   if (!this.auth.currentUser) {
-    this.userName.textContent = 'Not signing in!';
+    this.profileName.textContent = 'Not signing in!';
+  }
+  // If not end of page then just scroll down.
+  if (document.body.scrollTop != document.body.scrollHeight - window.innerHeight) {
+    window.location.href = "#enjoy-reading";
+    return;
   }
   var finTracker = document.getElementsByClassName("fin-records")[0].id; // Get finish-tracker.
   if (finTracker == 1) { // Finished all records.
     if (this.toaster.innerHTML != "The End.") {
       this.toaster.innerHTML = "The End.";
     }
-    window.location.href = "#footer-div";
+    window.location.href = "#enjoy-reading";
     return;
   }
   // else - Load stories when button click.
@@ -305,11 +337,14 @@ LiveCards.STORY_TEMPLATE =
     '<div class="mdl-card mdl-cell mdl-cell--12-col">' +
       '<figure class="storyImage mdl-card__media">' +
       '</figure>' +
-      '<div class="mdl-card__title mdl-card--expand">' +
+      '<div class="mdl-card__title">' +
         '<h1 class="title mdl-card__title-text mdl-color-text--blue-grey-300"></h1>' +
       '</div>' +
       '<div class="mdl-card__actions">' +
-        '<div class="userPic"></div>' +
+        '<span class="mdl-chip mdl-chip--contact mdl-chip--deletable">' +
+          '<span class="mdl-chip__contact user-pic"></span>' +
+          '<span class="mdl-chip__text user-name"></span>' +
+        '</span>' +
         '<button class="coUser mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">person_add</i></button>' +
       '</div>' +
       '<div class="mdl-card__supporting-text">' +
@@ -364,7 +399,8 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
     container.innerHTML = LiveCards.STORY_TEMPLATE;
     div = container.firstChild;
     div.setAttribute('id', key);
-    div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
+    div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + picUrl + ')';
+    div.getElementsByClassName("user-name")[0].innerHTML = name;
     div.getElementsByClassName("dateTime")[0].innerHTML = date;
     div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
     var x = div.getElementsByClassName("likeButton")[0];
@@ -463,7 +499,8 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
         container.innerHTML = LiveCards.STORY_TEMPLATE;
         div = container.firstChild;
         div.setAttribute('id', key);
-        div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
+        div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + picUrl + ')';
+        div.getElementsByClassName("user-name")[0].innerHTML = name;
         div.getElementsByClassName("dateTime")[0].innerHTML = date;
         div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
         var x = div.getElementsByClassName("likeButton")[0];
@@ -531,7 +568,8 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
     container.innerHTML = LiveCards.STORY_TEMPLATE;
     div = container.firstChild;
     div.setAttribute('id', key);
-    div.getElementsByClassName("userPic")[0].style.backgroundImage = 'url(' + picUrl + ')';
+    div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + picUrl + ')';
+    div.getElementsByClassName("user-name")[0].innerHTML = name;
     div.getElementsByClassName("dateTime")[0].innerHTML = date;
     div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
     var x = div.getElementsByClassName("likeButton")[0];
@@ -641,8 +679,7 @@ LiveCards.prototype.addNewCard = function() {
   var buttonMain = document.getElementById('icon-main');
   if (this.auth.currentUser) {
     this.inputBlock.removeAttribute('hidden');
-    this.addCard.setAttribute('hidden', 'true');
-    this.signOutButton.removeAttribute('hidden');
+    this.functionButton.setAttribute('hidden', 'true');
   } else {
     console.log(buttonMain);
     if (buttonMain.innerHTML == "lock") buttonMain.innerHTML = "create";
@@ -657,8 +694,6 @@ LiveCards.prototype.deleteNewCard = function() {
     fileDisplay.innerHTML = "";
     this.storyForm.reset();
     this.inputBlock.setAttribute('hidden', 'true');
-    this.addCard.removeAttribute('hidden');
-    this.signOutButton.setAttribute('hidden', 'true');
     this.functionButton.removeAttribute('hidden');
 };
 
@@ -690,7 +725,7 @@ LiveCards.prototype.saveStory = function(event) {
         this.bookRef = this.database.ref('book-20170808165000');
         this.bookRef.push({
           name: currentUser.displayName,
-          photoUrl: currentUser.photoURL || '/images/profile_placeholder.svg',
+          photoUrl: currentUser.photoURL || './images/profile_placeholder.svg',
           title: this.titleStory.value,
           content: this.contentStory.value,
           quote: this.quoteStory.value,
@@ -715,8 +750,7 @@ LiveCards.prototype.saveStory = function(event) {
           }.bind(this)).catch(function(error) {
               console.error('There was an error uploading a file to Cloud Storage:', error);
             });
-        this.addCard.removeAttribute('hidden');
-        this.signOutButton.setAttribute('hidden', 'true');
+        this.functionButton.removeAttribute('hidden');
       }
     } else {
       // If no image uploaded - check if user entered a title or any contents.
@@ -746,8 +780,7 @@ LiveCards.prototype.saveStory = function(event) {
           }.bind(this)).catch(function(error) {
               console.error('Error writing new message to Firebase Database', error);
             });
-        this.addCard.removeAttribute('hidden');
-        this.signOutButton.setAttribute('hidden', 'true');
+        this.functionButton.removeAttribute('hidden');
       }
     }
   } else {
@@ -764,15 +797,23 @@ LiveCards.prototype.signIn = function() {
 
 // Signs-out of Live Cards.
 LiveCards.prototype.signOut = function() {
-  // Clear form and Sign out of Firebase.
-  this.auth.signOut();
-  this.userPic.style.backgroundImage = "url('/images/profile_placeholder.svg')";
-  this.userName.textContent = 'Not signing in!';
-  this.deleteNewCard();
-  this.addCard.removeAttribute('hidden');
-  var buttonMain = document.getElementById('icon-main');
-  if (buttonMain.innerHTML == "create") buttonMain.innerHTML = "lock";
-  scroll(0,0);
+  if (this.profileName.textContent == 'Not signing in!') {
+    this.profileChip.setAttribute('hidden', 'true');
+    var loopMoreButton = document.getElementById("loop-more");
+    loopMoreButton.className = "add-padding";
+  } else {
+    // Clear form and Sign out of Firebase.
+    this.auth.signOut();
+    alert('Signing Out!');
+    this.profilePic.style.backgroundImage = "url('./images/profile_placeholder.svg')";
+    this.profileName.textContent = 'Not signing in!';
+    this.deleteNewCard();
+    var buttonMain = document.getElementById('icon-main');
+    if (buttonMain.innerHTML == "create") {
+      buttonMain.innerHTML = "lock";
+    }
+    scroll(0,0);
+  }
 };
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
@@ -780,25 +821,23 @@ LiveCards.prototype.onAuthStateChanged = function(user) {
   if (user) { // User is signed in!
     // Get profile pic and user's name from the Firebase user object.
     var profilePicUrl = user.photoURL; // Only change these two lines!
-    var userName = user.displayName;   // Only change these two lines!
+    var profileName = user.displayName;   // Only change these two lines!
 
     // Set the user's profile pic and name.
-    this.userPic.style.backgroundImage = 'url(' + profilePicUrl + ')';
-    this.userName.textContent = userName;
-    this.addCard.removeAttribute('hidden');
+    this.profilePic.style.backgroundImage = 'url(' + profilePicUrl + ')';
+    this.profileName.textContent = profileName;
+    this.profileChip.removeAttribute('hidden');
+    var loopMoreButton = document.getElementById("loop-more");
+    loopMoreButton.className = loopMoreButton.className.replace("add-padding", "");
+    this.functionButton.removeAttribute('hidden');
     var buttonMain = document.getElementById('icon-main');
     if (buttonMain.innerHTML == "lock") {
       buttonMain.innerHTML = "create";
     }
-    // Show sign-out button and input new card form.
-    // this.signOutButton.removeAttribute('hidden');
-    // this.inputBlock.removeAttribute('hidden');
-
   } else { // User is signed out!
-    // Hide sign-out button and input form.
-    this.signOutButton.setAttribute('hidden', 'true');
+    // Hide the input form.
     this.inputBlock.setAttribute('hidden', 'true');
-    this.addCard.removeAttribute('hidden');
+    this.functionButton.removeAttribute('hidden');
     var buttonMain = document.getElementById('icon-main');
     if (buttonMain.innerHTML == "create") buttonMain.innerHTML = "lock";
   }
