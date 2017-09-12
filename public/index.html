@@ -44,7 +44,7 @@
     <link rel="stylesheet" href="./styles/main-a.css">
   </head>
 
-  <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+  <body onload="myFunction()" class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
     <!-- Input form area -->
     <div id="input-block" hidden>
       <div class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
@@ -56,7 +56,7 @@
               <div class="mdl-card__actions mdl-card--border">
                 <label class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary">
                   <i id="image-icon" class="material-icons">image_upload</i>
-                  <input id="image-upload" class="none" type="file" accept="image/*";capture="camera" />
+                  <input id="image-upload" class="none" type="file" accept="image/*;capture=camera" />
                 </label>&nbsp;
                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect check-switch" for="image-switch">
                   <input type="checkbox" id="image-switch" class="mdl-switch__input">
@@ -98,9 +98,11 @@
     </div>
 
     <!-- Begin of the card(s) -->
-    <div id="show-list">
+    <div id="happy-beginning">
       <div id="story-list-0">
-        <div id="bottom-toast">Loading more.</div>
+        <div id="bottom-toast">Loading more</div>
+        <div id="msg-toast"></div>
+        <div id="log-height" hidden></div>
       </div>
     </div>
 
@@ -119,7 +121,7 @@
           <i id="icon-main" class="material-icons" role="presentation">lock</i>
         </button>
         <span id="load-prev">
-          <button id="prev-button" class="mdl-button mdl-button--icon mdl-button--colored" onclick="location.href='#show-list';">
+          <button id="prev-button" class="mdl-button mdl-button--icon mdl-button--colored" onclick="location.href='#happy-beginning';">
             <i class="material-icons">keyboard_arrow_up</i>
           </button>
 
@@ -166,6 +168,10 @@
 				  console.log("No it didn't. This happened: ", err)
 			  });
 		  }
+
+      function myFunction() {
+        alert(document.body.scrollHeight);
+      }
 	  </script>
   </body>
 </html>

@@ -26,7 +26,9 @@ function LiveCards() {
   this.scrollSwitch = document.getElementById('scroll-switch');
   this.imageSwitch = document.getElementById('image-switch');
   this.storySwitch = document.getElementById('story-switch');
-  this.toaster = document.getElementById('bottom-toast');
+  this.bottomToast = document.getElementById('bottom-toast');
+  this.msgToast = document.getElementById('msg-toast');
+  this.logHeight = document.getElementById('log-height');
 
   this.storyForm.addEventListener('submit', this.saveStory.bind(this));
   this.addCard.addEventListener('click', this.addNewCard.bind(this));
@@ -45,6 +47,7 @@ function LiveCards() {
   this.scrollSwitch.addEventListener('change', this.scrollMode.bind(this));
   this.imageSwitch.addEventListener('change', this.imageMode.bind(this));
   this.storySwitch.addEventListener('change', this.storyMode.bind(this));
+  this.storyList0.addEventListener('change', this.initHeight.bind(this));
 
   this.initFirebase();
   this.initBook();
@@ -68,8 +71,21 @@ LiveCards.prototype.blurInput = function() {
   this.functionButton.removeAttribute('hidden');
 };
 
-LiveCards.prototype.bottomToast = function() {
-  var getToaster = this.toaster;
+LiveCards.prototype.bottomToaster = function() {
+  var getToaster = this.bottomToast;
+  console.log(getToaster.innerHTML);
+  getToaster.className = "show";
+  setTimeout(function() {
+    getToaster.className = getToaster.className.replace("show", "");
+  }, 2300);
+};
+
+LiveCards.prototype.msgToaster = function(msg) {
+  var getToaster = this.msgToast;
+  if (msg) {
+    getToaster.innerHTML = msg;
+  }
+  console.log(getToaster.innerHTML);
   getToaster.className = "show";
   setTimeout(function() {
     getToaster.className = getToaster.className.replace("show", "");
@@ -129,6 +145,14 @@ LiveCards.prototype.handleFileSelect = function(event) {
     reader.readAsDataURL(file);
     return file;
   }
+};
+
+LiveCards.prototype.initHeight = function () {
+  alert('on-load test!');
+  window.addEventListener("load",
+    function() {
+      alert(document.body.scrollHeight);
+    }, false);
 };
 
 //Loads the stories from the bookRef - n: Lot-Size, type: init or loop.
@@ -217,21 +241,22 @@ LiveCards.prototype.scrollLoop = function(evt) {
     console.log('finish-tracker: ' + finTracker);
     console.log('loopBook!');
     if (!this.scrollSwitch.checked) {
-      if (finTracker == 1 && this.toaster.innerHTML == "Loading more.") {
+      if (finTracker == 1 && this.bottomToast.innerHTML == "Loading more") {
         console.log('1+Loading more.');
-        this.toaster.innerHTML = "The End.";
+        this.bottomToast.innerHTML = "The End";
       }
-      this.bottomToast();
-      console.log(this.toaster.innerHTML)
+      this.bottomToaster();
+      console.log(this.bottomToast.innerHTML)
       setTimeout(this.loopBook.bind(this), 1000);
     } else {
-      if (finTracker == 1 && this.toaster.innerHTML == "Loading more.") {
+      if (finTracker == 1 && this.bottomToast.innerHTML == "Loading more") {
         console.log('1+Loading more.');
-        this.toaster.innerHTML = "The End.";
+        this.bottomToast.innerHTML = "The End";
+        return;
       }
-      if (finTracker == 1 && this.toaster.innerHTML == "The End.") {
-        console.log('1+The End.');
-        this.bottomToast();
+      if (finTracker == 1 && this.bottomToast.innerHTML == "The End") {
+        console.log('1+The End');
+        this.bottomToaster();
         setTimeout(this.loopBook.bind(this), 1000);
       }
     }
@@ -249,20 +274,26 @@ LiveCards.prototype.loopBook = function() {
   if (!this.auth.currentUser) {
     this.profileName.textContent = 'Not signing in!';
   }
+  var justScroll = false;
+  var finTracker = document.getElementsByClassName("fin-records")[0].id; // Get finish-tracker.
   // If not end of page then just scroll down.
   if (document.body.scrollTop != document.body.scrollHeight - window.innerHeight) {
     window.location.href = "#enjoy-reading";
-    return;
+    justScroll = true;
   }
-  var finTracker = document.getElementsByClassName("fin-records")[0].id; // Get finish-tracker.
-  if (finTracker == 1) { // Finished all records.
-    if (this.toaster.innerHTML != "The End.") {
-      this.toaster.innerHTML = "The End.";
+  if (finTracker == 1) {
+    if (this.bottomToast.innerHTML != "The End") { // Finished all records.
+      this.bottomToast.innerHTML = "The End";
+      return;
     }
-    window.location.href = "#enjoy-reading";
     return;
   }
-  // else - Load stories when button click.
+  if (justScroll) {
+    return;
+  }
+  if (this.scrollSwitch.checked) {
+    this.msgToaster("Loading more-283");
+  }
   var n = 4; // Loads story of (n) = lot-size +1
   var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
   var keyTracker = document.getElementsByClassName("key-tracker")[0].id; // Get key-tracker.
@@ -407,6 +438,9 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
       this.storyList0.insertBefore(div,this.storyList0.firstChild);
+      if (true) {
+        this.msgToaster("Adding story");
+      }
     } else {
       this.storyList0.appendChild(div);
     }
@@ -474,7 +508,7 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
       finishRecords.setAttribute('id',1);
       console.log(finishRecords);
     }
-    var showList = document.getElementById("show-list");
+    var showList = document.getElementById("happy-beginning");
     var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
     var listName = "story-list-" + i;
     console.log('create name: ' + listName);
@@ -576,8 +610,15 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
       this.storyList0.insertBefore(div,this.storyList0.firstChild);
+      if (document.body.scrollTop > 0) {
+        this.msgToaster("*Adding story");
+        if (!this.scrollSwitch.checked) {
+          setTimeout(function(){ scroll(0,0); }, 1000);
+        }
+      }
     } else {
       this.storyList0.appendChild(div);
+      this.msgToaster("*Loading more");
     }
     var showDate = document.getElementsByClassName("now-display")[0].id;
     if (storyDate > showDate) {
@@ -804,7 +845,7 @@ LiveCards.prototype.signOut = function() {
   } else {
     // Clear form and Sign out of Firebase.
     this.auth.signOut();
-    alert('Signing Out!');
+    this.msgToaster("Signing out.");
     this.profilePic.style.backgroundImage = "url('./images/profile_placeholder.svg')";
     this.profileName.textContent = 'Not signing in!';
     this.deleteNewCard();
@@ -812,7 +853,6 @@ LiveCards.prototype.signOut = function() {
     if (buttonMain.innerHTML == "create") {
       buttonMain.innerHTML = "lock";
     }
-    scroll(0,0);
   }
 };
 
