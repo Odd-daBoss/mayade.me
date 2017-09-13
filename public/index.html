@@ -20,31 +20,13 @@
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,500,400italic,700,700italic' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.light_green-red.min.css" />
     <script src="//storage.googleapis.com/code.getmdl.io/1.0.1/material.min.js"></script>
-<!--
-		<style>
-  		body {
-      	font-family: 'Dosis';font-size: 12px;
-  			background-repeat: no-repeat;
-  			background-image: url('images/screen_small.png');
-  		}
-  		@media only screen and (min-width: 400px) {
-  			body {
-  				background-image: url('images/screen_midsize.png');
-  			}
-  		@media only screen and (min-width: 700px) {
-  			body {
-  				background-image: url('images/screen_large.png');
-  			}
-  		}
-  		}
-		</style>
--->
+    <!-- Add to home screen manifest file -->
 		<link rel="manifest" href="/manifest.json">
     <!-- Applied styles -->
     <link rel="stylesheet" href="./styles/main-a.css">
   </head>
 
-  <body onload="myFunction()" class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+  <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
     <!-- Input form area -->
     <div id="input-block" hidden>
       <div class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
@@ -55,35 +37,37 @@
               </div>
               <div class="mdl-card__actions mdl-card--border">
                 <label class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary">
-                  <i id="image-icon" class="material-icons">image_upload</i>
-                  <input id="image-upload" class="none" type="file" accept="image/*;capture=camera" />
+                  <i id="image-icon" class="material-icons">camera_alt</i>
+                  <input id="image-upload" class="none" type="file" accept="image/*" capture="camera" />
                 </label>&nbsp;
                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect check-switch" for="image-switch">
-                  <input type="checkbox" id="image-switch" class="mdl-switch__input">
+                  <input type="checkbox" id="image-switch" class="mdl-switch__input" checked>
                 </label>
               </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text" autocomplete="off" id="title-story"/>
+                <textarea class="mdl-textfield__input" type="text" rows="1" id="title-story"></textarea>
                 <label class="mdl-textfield__label" for="title-story">Title</label>
-              </div><br />
+              </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <textarea class="mdl-textfield__input" type="text" rows="3" id="content-story"></textarea>
-                <label class="mdl-textfield__label" for="content-story">Beginning</label>
-              </div><br />
-              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <textarea class="mdl-textfield__input" type="text" rows="1" id="quote-story"></textarea>
-                <label class="mdl-textfield__label" for="quote-story">Quote</label>
-              </div><br />
-              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <textarea class="mdl-textfield__input" type="text" rows="3" id="ending-story"></textarea>
-                <label class="mdl-textfield__label" for="ending-story">Ending</label>
-              </div><br />
+                <label class="mdl-textfield__label" for="content-story">Story</label>
+              </div>
+              <div id="fast-story" hidden>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <textarea class="mdl-textfield__input" type="text" rows="1" id="quote-story"></textarea>
+                  <label class="mdl-textfield__label" for="quote-story">Quote</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <textarea class="mdl-textfield__input" type="text" rows="3" id="ending-story"></textarea>
+                  <label class="mdl-textfield__label" for="ending-story">Ending</label>
+                </div>
+              </div>
               <div class="mdl-card__actions mdl-card--border">
                 <button id="submit" type="submit" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary">
-                  <i id="story-icon" class="material-icons">send</i>
+                  <i id="story-icon" class="material-icons">near_me</i>
                 </button>&nbsp;
                 <label class = "mdl-switch mdl-js-switch mdl-js-ripple-effect check-switch" for = "story-switch">
-                  <input type = "checkbox" id = "story-switch" class = "mdl-switch__input">
+                  <input type = "checkbox" id = "story-switch" class = "mdl-switch__input" checked>
                 </label>
               </div>
               <div class="mdl-card__menu">
@@ -102,7 +86,6 @@
       <div id="story-list-0">
         <div id="bottom-toast">Loading more</div>
         <div id="msg-toast"></div>
-        <div id="log-height" hidden></div>
       </div>
     </div>
 
@@ -168,10 +151,6 @@
 				  console.log("No it didn't. This happened: ", err)
 			  });
 		  }
-
-      function myFunction() {
-        alert(document.body.scrollHeight);
-      }
 	  </script>
   </body>
 </html>

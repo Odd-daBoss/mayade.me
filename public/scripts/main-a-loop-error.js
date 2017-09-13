@@ -104,25 +104,19 @@ LiveCards.prototype.imageMode = function() {
   if (this.imageSwitch.checked) {
     console.log("IMG checked!");
     imageIcon.innerHTML = "camera_alt";
-    this.imageUpload.accept = "image/*";
-    this.imageUpload.capture = "camera";
   } else {
     console.log("IMG un-checked!");
     imageIcon.innerHTML = "image_upload";
-    this.imageUpload.accept = "image/*;capture=camera";
   }
 };
 
 LiveCards.prototype.storyMode = function () {
   var storyIcon = document.getElementById('story-icon');
-  var fastStory = document.getElementById('fast-story');
   if (this.storySwitch.checked) {
     console.log("STORY checked!");
-    fastStory.setAttribute('hidden', 'true');
     storyIcon.innerHTML = "near_me";
   } else {
     console.log("STORY un-checked!");
-    fastStory.removeAttribute('hidden');
     storyIcon.innerHTML = "send";
   }
 };
@@ -242,7 +236,7 @@ LiveCards.prototype.scrollLoop = function(evt) {
         this.bottomToast.innerHTML = "The End";
       }
       this.bottomToaster();
-      console.log(this.bottomToast.innerHTML)
+      console.log(this.bottomToast.innerHTML);
       setTimeout(this.loopBook.bind(this), 1000);
     } else {
       if (finTracker == 1 && this.bottomToast.innerHTML == "Loading more") {
@@ -275,7 +269,6 @@ LiveCards.prototype.loopBook = function() {
   // If not end of page then just scroll down.
   if (document.body.scrollTop != document.body.scrollHeight - window.innerHeight) {
     window.location.href = "#enjoy-reading";
-    console.log('scroll to enjoy-reading!')
     justScroll = true;
   }
   if (finTracker == 1) {
@@ -289,7 +282,7 @@ LiveCards.prototype.loopBook = function() {
     return;
   }
   if (this.scrollSwitch.checked) {
-    this.msgToaster("Loading more");
+    this.msgToaster("Loading more-283");
   }
   var n = 4; // Loads story of (n) = lot-size +1
   var i = document.getElementsByClassName("loop-tracker")[0].id; // Get loop-tracker.
@@ -434,10 +427,10 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
     var x = div.getElementsByClassName("likeButton")[0];
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
-      this.msgToaster("Adding story");
-      if (!this.scrollSwitch.checked) {
-        scroll(0,0);
-      }
+        this.msgToaster("Adding story-444");
+        if (!this.scrollSwitch.checked) {
+          scroll(0,0);
+        }
       this.storyList0.insertBefore(div,this.storyList0.firstChild);
     } else {
       this.storyList0.appendChild(div);
@@ -607,15 +600,13 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
     var x = div.getElementsByClassName("likeButton")[0];
     x.setAttribute('id', key+'.like');
     if (storyDate > firstDate) {
-      if (document.body.scrollTop > 0) {
-        this.msgToaster("Adding story");
+        this.msgToaster("*Adding story");
         if (!this.scrollSwitch.checked) {
           scroll(0,0);
         }
-      }
       this.storyList0.insertBefore(div,this.storyList0.firstChild);
     } else {
-      this.msgToaster("Loading more");
+      this.msgToaster("*Loading more");
       this.storyList0.appendChild(div);
     }
     var showDate = document.getElementsByClassName("now-display")[0].id;
@@ -888,6 +879,8 @@ LiveCards.prototype.checkSetup = function () {
     window.alert('You have not configured and imported the Firebase SDK. ' +
         'Make sure you go through the codelab setup instructions and make ' +
         'sure you are running the codelab using `firebase serve`');
+  } else {
+    // window.alert('All Good! - ' + firebase.app().name);
   }
 };
 
