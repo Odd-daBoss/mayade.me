@@ -62,11 +62,11 @@ LiveCards.prototype.initFirebase = function() {
 };
 
 LiveCards.prototype.focusInput = function() {
-  this.functionButton.setAttribute('hidden', 'true');
+
 };
 
 LiveCards.prototype.blurInput = function() {
-  this.functionButton.removeAttribute('hidden');
+
 };
 
 LiveCards.prototype.bottomToaster = function() {
@@ -130,7 +130,6 @@ LiveCards.prototype.storyMode = function () {
 LiveCards.prototype.handleFileSelect = function(event) {
   event.preventDefault();
   var file = event.target.files[0];
-  this.functionButton.setAttribute('hidden', 'true');
   // Only process image files.
   if (file.type.match('image.*')) {
 
@@ -373,7 +372,11 @@ LiveCards.STORY_TEMPLATE =
           '<span class="mdl-chip__contact user-pic"></span>' +
           '<span class="mdl-chip__text user-name"></span>' +
         '</span>' +
-        '<button class="coUser mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">person_add</i></button>' +
+          '<span hidden class="co-chip mdl-chip mdl-chip--contact mdl-chip--deletable">' +
+            '<span class="mdl-chip__contact co-user-pic"></span>' +
+            '<span class="mdl-chip__text co-user-name"></span>' +
+          '</span>' +
+        '<button class="co-writer mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">person_add</i></button>' +
       '</div>' +
       '<div class="mdl-card__supporting-text">' +
         '<p class="content"></p>' +
@@ -389,7 +392,7 @@ LiveCards.STORY_TEMPLATE =
             '<span class="readTime mdl-chip__text"></span>' +
           '</span>' +
         '<div class="mdl-layout-spacer"></div>' +
-        '<button class="likeButton mdl-button mdl-button--icon mdl-button--colored mdl-badge" data-badge="3"><i class="material-icons">favorite</i></button>' +
+        '<button class="like-button mdl-button mdl-button--icon mdl-button--colored mdl-badge" data-badge="3"><i class="material-icons">favorite</i></button>' +
         '<button class="shareButton mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">share</i></button>' +
       '</div>' +
       '<div class="mdl-card__menu">' +
@@ -431,8 +434,10 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
     div.getElementsByClassName("user-name")[0].innerHTML = name;
     div.getElementsByClassName("dateTime")[0].innerHTML = date;
     div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
-    var x = div.getElementsByClassName("likeButton")[0];
-    x.setAttribute('id', key+'.like');
+    var likeID = div.getElementsByClassName("like-button")[0];
+    likeID.setAttribute('id', key+'.like');
+    var coWriteID = div.getElementsByClassName("co-writer")[0];
+    coWriteID.setAttribute('id', key+'.co');
     if (storyDate > firstDate) {
       this.msgToaster("Adding story");
       if (!this.scrollSwitch.checked) {
@@ -535,8 +540,10 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
         div.getElementsByClassName("user-name")[0].innerHTML = name;
         div.getElementsByClassName("dateTime")[0].innerHTML = date;
         div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
-        var x = div.getElementsByClassName("likeButton")[0];
-        x.setAttribute('id', key+'.like');
+        var likeID = div.getElementsByClassName("like-button")[0];
+        likeID.setAttribute('id', key+'.like');
+        var coWriteID = div.getElementsByClassName("co-writer")[0];
+        coWriteID.setAttribute('id', key+'.co');
         loopList.insertBefore(div,loopList.firstChild);
         var z = document.getElementsByClassName("scr-display")[0].id;
         var scrZ = document.getElementsByClassName("scr-display")[0];
@@ -604,8 +611,10 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
     div.getElementsByClassName("user-name")[0].innerHTML = name;
     div.getElementsByClassName("dateTime")[0].innerHTML = date;
     div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
-    var x = div.getElementsByClassName("likeButton")[0];
-    x.setAttribute('id', key+'.like');
+    var likeID = div.getElementsByClassName("like-button")[0];
+    likeID.setAttribute('id', key+'.like');
+    var coWriteID = div.getElementsByClassName("co-writer")[0];
+    coWriteID.setAttribute('id', key+'.co');
     if (storyDate > firstDate) {
       if (document.body.scrollTop > 0) {
         this.msgToaster("Adding story");

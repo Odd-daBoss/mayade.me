@@ -56,7 +56,7 @@ html, body {
 .none {
   display: none;
 }
-.user-pic, #profile-pic {
+.user-pic, .co-user-pic, #profile-pic {
   background-image: url('./../images/profile_placeholder.svg');
   background-repeat: no-repeat;
   background-size: cover;
