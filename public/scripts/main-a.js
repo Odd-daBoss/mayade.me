@@ -150,6 +150,29 @@ LiveCards.prototype.handleFileSelect = function(event) {
   }
 };
 
+LiveCards.prototype.handleCoFileSelect = function(event) {
+  event.preventDefault();
+  var file = event.target.files[0];
+  // Only process image files.
+  if (file.type.match('image.*')) {
+
+    var reader = new FileReader();
+    // Closure to capture the file information.
+    reader.onload = function(e) {
+      coFileDisplay.innerHTML = "";
+
+      var img = new Image();
+      img.src = reader.result;
+      img.id = "selected-image";
+
+      coFileDisplay.appendChild(img);
+    }
+
+    reader.readAsDataURL(file);
+    return file;
+  }
+};
+
 //Loads the stories from the bookRef - n: Lot-Size, type: init or loop.
 LiveCards.prototype.initBook = function() {
   this.bookRef = this.database.ref('book-20170808165000'); // Reference to the database path.
@@ -362,44 +385,69 @@ LiveCards.prototype.loopBook = function() {
 LiveCards.STORY_TEMPLATE =
   '<div class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">' +
     '<div class="mdl-card mdl-cell mdl-cell--12-col">' +
-      '<figure class="storyImage mdl-card__media">' +
-      '</figure>' +
-      '<div class="mdl-card__title">' +
-        '<h1 class="title mdl-card__title-text mdl-color-text--blue-grey-300"></h1>' +
-      '</div>' +
-      '<div class="mdl-card__actions">' +
-        '<span class="mdl-chip mdl-chip--contact mdl-chip--deletable">' +
-          '<span class="mdl-chip__contact user-pic"></span>' +
-          '<span class="mdl-chip__text user-name"></span>' +
-        '</span>' +
+      '<form id="co-story-form">' +
+        '<figure class="storyImage mdl-card__media">' +
+        '</figure>' +
+              '<div class="mdl-card__actions mdl-card--border">' +
+                '<label class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary">' +
+                  '<i id="image-icon" class="material-icons">camera_alt</i>' +
+                  '<input id="image-upload" class="none" type="file" accept="image/*" capture="camera" />' +
+                '</label>&nbsp;' +
+                '<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect check-switch" for="image-switch">' +
+                  '<input type="checkbox" id="image-switch" class="mdl-switch__input" checked>' +
+                '</label>' +
+              '</div>' +
+        '<div class="mdl-card__title">' +
+          '<h1 class="title mdl-card__title-text mdl-color-text--blue-grey-300"></h1>' +
+        '</div>' +
+              '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">' +
+                '<textarea class="mdl-textfield__input" type="text" rows="1" id="title-story"></textarea>' +
+                '<label class="mdl-textfield__label" for="title-story">Title</label>' +
+              '</div>' +
+        '<div class="mdl-card__actions">' +
+          '<span class="mdl-chip mdl-chip--contact mdl-chip--deletable">' +
+            '<span class="mdl-chip__contact user-pic"></span>' +
+            '<span class="mdl-chip__text user-name"></span>' +
+          '</span>' +
           '<span hidden class="co-chip mdl-chip mdl-chip--contact mdl-chip--deletable">' +
             '<span class="mdl-chip__contact co-user-pic"></span>' +
             '<span class="mdl-chip__text co-user-name"></span>' +
           '</span>' +
-        '<button class="co-writer mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">person_add</i></button>' +
-      '</div>' +
-      '<div class="mdl-card__supporting-text">' +
-        '<p class="content"></p>' +
-        '<div class="w3-panel w3-leftbar">' +
-        '<p><i class="fa fa-quote-right w3-xlarge"></i><br>' +
-        '<i class="w3-serif w3-large quote"></i></p>' +
+          '<button class="co-writer mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">person_add</i></button>' +
         '</div>' +
-        '<p class="ending"></p>' +
-      '</div>' +
-      '<div class="mdl-card__actions mdl-card--border">' +
+        '<div class="mdl-card__supporting-text">' +
+          '<p class="content"></p>' +
+              '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">' +
+                '<textarea class="mdl-textfield__input" type="text" rows="3" id="content-story"></textarea>' +
+                '<label class="mdl-textfield__label" for="content-story">Story</label>' +
+              '</div>' +
+          '<div class="w3-panel w3-leftbar">' +
+            '<p><i class="fa fa-quote-right w3-xlarge"></i><br>' +
+            '<i class="w3-serif w3-large quote"></i></p>' +
+          '</div>' +
+                '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">' +
+                  '<textarea class="mdl-textfield__input" type="text" rows="1" id="quote-story"></textarea>' +
+                  '<label class="mdl-textfield__label" for="quote-story">Quote</label>' +
+                '</div>' +
+          '<p class="ending"></p>' +
+                '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">' +
+                  '<textarea class="mdl-textfield__input" type="text" rows="3" id="ending-story"></textarea>' +
+                  '<label class="mdl-textfield__label" for="ending-story">Ending</label>' +
+                '</div>' +
+        '</div>' +
+        '<div class="mdl-card__actions mdl-card--border">' +
           '<span class="mdl-chip">' +
             '<span class="dateTime mdl-chip__text" hidden></span>' +
             '<span class="readTime mdl-chip__text"></span>' +
           '</span>' +
-        '<div class="mdl-layout-spacer"></div>' +
-        '<button class="like-button mdl-button mdl-button--icon mdl-button--colored mdl-badge" data-badge="3"><i class="material-icons">favorite</i></button>' +
-        '<button class="shareButton mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">share</i></button>' +
-      '</div>' +
-      '<div class="mdl-card__menu">' +
-        '<button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">' +
-          '<i class="material-icons">whatshot</i>' +
-        '</button>' +
-      '</div>' +
+          '<div class="mdl-layout-spacer"></div>' +
+          '<span class="mdl-badge mdl-badge--no-background like-badge" data-badge="0"></span>' +
+          '<button class="like-button mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">favorite</i></button>' +
+        '</div>' +
+        '<div class="mdl-card__menu">' +
+          '<button class="share-button mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">share</i></button>' +
+        '</div>' +
+      '</form>' +
     '</div>' +
   '</div>';
 
@@ -435,9 +483,23 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
     div.getElementsByClassName("dateTime")[0].innerHTML = date;
     div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
     var likeID = div.getElementsByClassName("like-button")[0];
-    likeID.setAttribute('id', key+'.like');
+    likeID.setAttribute('id', 'lk.'+key);
+    var badgeID = div.getElementsByClassName("like-badge")[0];
+    badgeID.setAttribute('id', 'bg.'+key);
+    var shareID = div.getElementsByClassName("share-button")[0];
+    shareID.setAttribute('id', 'sh.'+key);
     var coWriteID = div.getElementsByClassName("co-writer")[0];
-    coWriteID.setAttribute('id', key+'.co');
+    coWriteID.setAttribute('id', 'co.'+key);
+    var coImage = div.getElementsByClassName("co-image-story")[0];
+    coImage.setAttribute('id', 'image-story.'+key);
+    var coTitle = div.getElementsByClassName("co-title-story")[0];
+    coTitle.setAttribute('id', 'title-story.'+key);
+    var coStory = div.getElementsByClassName("co-story-story")[0];
+    coStory.setAttribute('id', 'story-story.'+key);
+    var coQuote = div.getElementsByClassName("co-quote-story")[0];
+    coQuote.setAttribute('id', 'quote-story.'+key);
+    var coEnddy = div.getElementsByClassName("co-enddy-story")[0];
+    coEnddy.setAttribute('id', 'enddy-story.'+key);
     if (storyDate > firstDate) {
       this.msgToaster("Adding story");
       if (!this.scrollSwitch.checked) {
@@ -541,9 +603,23 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
         div.getElementsByClassName("dateTime")[0].innerHTML = date;
         div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
         var likeID = div.getElementsByClassName("like-button")[0];
-        likeID.setAttribute('id', key+'.like');
+        likeID.setAttribute('id', 'lk.'+key);
+        var badgeID = div.getElementsByClassName("like-badge")[0];
+        badgeID.setAttribute('id', 'bg.'+key);
+        var shareID = div.getElementsByClassName("share-button")[0];
+        shareID.setAttribute('id', 'sh.'+key);
         var coWriteID = div.getElementsByClassName("co-writer")[0];
-        coWriteID.setAttribute('id', key+'.co');
+        coWriteID.setAttribute('id', 'co.'+key);
+        var coImage = div.getElementsByClassName("co-image-story")[0];
+        coImage.setAttribute('id', 'image-story.'+key);
+        var coTitle = div.getElementsByClassName("co-title-story")[0];
+        coTitle.setAttribute('id', 'title-story.'+key);
+        var coStory = div.getElementsByClassName("co-story-story")[0];
+        coStory.setAttribute('id', 'story-story.'+key);
+        var coQuote = div.getElementsByClassName("co-quote-story")[0];
+        coQuote.setAttribute('id', 'quote-story.'+key);
+        var coEnddy = div.getElementsByClassName("co-enddy-story")[0];
+        coEnddy.setAttribute('id', 'enddy-story.'+key);
         loopList.insertBefore(div,loopList.firstChild);
         var z = document.getElementsByClassName("scr-display")[0].id;
         var scrZ = document.getElementsByClassName("scr-display")[0];
@@ -612,9 +688,23 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
     div.getElementsByClassName("dateTime")[0].innerHTML = date;
     div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
     var likeID = div.getElementsByClassName("like-button")[0];
-    likeID.setAttribute('id', key+'.like');
+    likeID.setAttribute('id', 'lk.'+key);
+    var badgeID = div.getElementsByClassName("like-badge")[0];
+    badgeID.setAttribute('id', 'bg.'+key);
+    var shareID = div.getElementsByClassName("share-button")[0];
+    shareID.setAttribute('id', 'sh.'+key);
     var coWriteID = div.getElementsByClassName("co-writer")[0];
-    coWriteID.setAttribute('id', key+'.co');
+    coWriteID.setAttribute('id', 'co.'+key);
+    var coImage = div.getElementsByClassName("co-image-story")[0];
+    coImage.setAttribute('id', 'image-story.'+key);
+    var coTitle = div.getElementsByClassName("co-title-story")[0];
+    coTitle.setAttribute('id', 'title-story.'+key);
+    var coStory = div.getElementsByClassName("co-story-story")[0];
+    coStory.setAttribute('id', 'story-story.'+key);
+    var coQuote = div.getElementsByClassName("co-quote-story")[0];
+    coQuote.setAttribute('id', 'quote-story.'+key);
+    var coEnddy = div.getElementsByClassName("co-enddy-story")[0];
+    coEnddy.setAttribute('id', 'enddy-story.'+key);
     if (storyDate > firstDate) {
       if (document.body.scrollTop > 0) {
         this.msgToaster("Adding story");
@@ -899,6 +989,31 @@ LiveCards.prototype.checkSetup = function () {
         'sure you are running the codelab using `firebase serve`');
   }
 };
+
+$(document).ready(function() {
+  $(document).on('click', '.co-writer', function() {
+    console.log(this.id);
+    var cowriteID = this.id.substr(3);
+    console.log(cowriteID);
+  });
+
+  $(document).on('click', '.like-button', function() {
+    var keyID = this.id.substr(3);
+    var badgeID = 'bg.' + keyID;
+    var likeCount = 0;
+    likeCount++;
+    var likeBadge = document.getElementById(badgeID);
+    likeBadge.setAttribute('data-badge', '+1');
+    likeBadge.className = likeBadge.className + " show";
+    setTimeout(function(){ likeBadge.className = likeBadge.className.replace(" show", ""); }, 2300);
+  });
+
+  $(document).on('click', '.share-button', function() {
+    console.log(this.id);
+    var shareID = this.id.substr(3);
+    console.log(shareID);
+  });
+});
 
 window.onload = function() {
   window.livecards = new LiveCards();

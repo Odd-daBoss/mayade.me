@@ -56,6 +56,33 @@ html, body {
 .none {
   display: none;
 }
+.like-badge {
+  visibility: hidden;
+  position:relative;
+  bottom: 30px;
+  left: 30px;
+}
+.like-badge.show {
+    visibility: visible;
+    -webkit-animation: likefadein 0.5s, likefadeout 0.5s 2.0s;
+    animation: likefadein 0.5s, likefadeout 0.5s 2.0s;
+}
+@-webkit-keyframes likefadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+@keyframes likefadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+}
+@-webkit-keyframes likefadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
+@keyframes likefadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+}
 .user-pic, .co-user-pic, #profile-pic {
   background-image: url('./../images/profile_placeholder.svg');
   background-repeat: no-repeat;
