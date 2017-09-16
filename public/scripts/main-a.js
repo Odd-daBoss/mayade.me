@@ -385,24 +385,21 @@ LiveCards.prototype.loopBook = function() {
 LiveCards.STORY_TEMPLATE =
   '<div class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">' +
     '<div class="mdl-card mdl-cell mdl-cell--12-col">' +
-      '<form id="co-story-form">' +
+      '<form class="co-sform-story">' +
         '<figure class="storyImage mdl-card__media">' +
         '</figure>' +
               '<div class="mdl-card__actions mdl-card--border">' +
                 '<label class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--primary">' +
-                  '<i id="image-icon" class="material-icons">camera_alt</i>' +
-                  '<input id="image-upload" class="none" type="file" accept="image/*" capture="camera" />' +
-                '</label>&nbsp;' +
-                '<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect check-switch" for="image-switch">' +
-                  '<input type="checkbox" id="image-switch" class="mdl-switch__input" checked>' +
+                  '<i class="material-icons">file_upload</i>' +
+                  '<input class="none co-image-story" type="file" accept="image/*" capture="camera" />' +
                 '</label>' +
               '</div>' +
         '<div class="mdl-card__title">' +
           '<h1 class="title mdl-card__title-text mdl-color-text--blue-grey-300"></h1>' +
         '</div>' +
               '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">' +
-                '<textarea class="mdl-textfield__input" type="text" rows="1" id="title-story"></textarea>' +
-                '<label class="mdl-textfield__label" for="title-story">Title</label>' +
+                '<textarea class="mdl-textfield__input co-title-story" type="text" rows="1"></textarea>' +
+                '<label class="mdl-textfield__label">Title</label>' +
               '</div>' +
         '<div class="mdl-card__actions">' +
           '<span class="mdl-chip mdl-chip--contact mdl-chip--deletable">' +
@@ -418,21 +415,21 @@ LiveCards.STORY_TEMPLATE =
         '<div class="mdl-card__supporting-text">' +
           '<p class="content"></p>' +
               '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">' +
-                '<textarea class="mdl-textfield__input" type="text" rows="3" id="content-story"></textarea>' +
-                '<label class="mdl-textfield__label" for="content-story">Story</label>' +
+                '<textarea class="mdl-textfield__input co-story-story" type="text" rows="3"></textarea>' +
+                '<label class="mdl-textfield__label">Story</label>' +
               '</div>' +
           '<div class="w3-panel w3-leftbar">' +
             '<p><i class="fa fa-quote-right w3-xlarge"></i><br>' +
             '<i class="w3-serif w3-large quote"></i></p>' +
           '</div>' +
                 '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">' +
-                  '<textarea class="mdl-textfield__input" type="text" rows="1" id="quote-story"></textarea>' +
-                  '<label class="mdl-textfield__label" for="quote-story">Quote</label>' +
+                  '<textarea class="mdl-textfield__input co-quote-story" type="text" rows="1"></textarea>' +
+                  '<label class="mdl-textfield__label">Quote</label>' +
                 '</div>' +
           '<p class="ending"></p>' +
                 '<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">' +
-                  '<textarea class="mdl-textfield__input" type="text" rows="3" id="ending-story"></textarea>' +
-                  '<label class="mdl-textfield__label" for="ending-story">Ending</label>' +
+                  '<textarea class="mdl-textfield__input co-enddy-story" type="text" rows="3"></textarea>' +
+                  '<label class="mdl-textfield__label">Ending</label>' +
                 '</div>' +
         '</div>' +
         '<div class="mdl-card__actions mdl-card--border">' +
@@ -490,6 +487,8 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
     shareID.setAttribute('id', 'sh.'+key);
     var coWriteID = div.getElementsByClassName("co-writer")[0];
     coWriteID.setAttribute('id', 'co.'+key);
+    var coSform = div.getElementsByClassName("co-sform-story")[0];
+    coSform.setAttribute('id', 'sform-story.'+key);
     var coImage = div.getElementsByClassName("co-image-story")[0];
     coImage.setAttribute('id', 'image-story.'+key);
     var coTitle = div.getElementsByClassName("co-title-story")[0];
@@ -610,6 +609,8 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
         shareID.setAttribute('id', 'sh.'+key);
         var coWriteID = div.getElementsByClassName("co-writer")[0];
         coWriteID.setAttribute('id', 'co.'+key);
+        var coSform = div.getElementsByClassName("co-sform-story")[0];
+        coSform.setAttribute('id', 'sform-story.'+key);
         var coImage = div.getElementsByClassName("co-image-story")[0];
         coImage.setAttribute('id', 'image-story.'+key);
         var coTitle = div.getElementsByClassName("co-title-story")[0];
@@ -695,6 +696,8 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
     shareID.setAttribute('id', 'sh.'+key);
     var coWriteID = div.getElementsByClassName("co-writer")[0];
     coWriteID.setAttribute('id', 'co.'+key);
+    var coSform = div.getElementsByClassName("co-sform-story")[0];
+    coSform.setAttribute('id', 'sform-story.'+key);
     var coImage = div.getElementsByClassName("co-image-story")[0];
     coImage.setAttribute('id', 'image-story.'+key);
     var coTitle = div.getElementsByClassName("co-title-story")[0];
