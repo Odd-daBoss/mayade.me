@@ -924,7 +924,7 @@ LiveCards.prototype.onAuthStateChanged = function(user) {
 };
 
 // Checks that the Firebase SDK has been correctly setup and configured.
-LiveCards.prototype.checkSetup = function () {
+LiveCards.prototype.checkSetup = function() {
 
   if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
     window.alert('You have not configured and imported the Firebase SDK. ' +
@@ -933,25 +933,37 @@ LiveCards.prototype.checkSetup = function () {
   }
 };
 
+LiveCards.prototype.coWritingClick = function(clickID) {
+  console.log("coWriter: " + clickID.substr(3));
+  this.bookRef = this.database.ref('book-20170808165000'); // Reference to the database path.
+  this.bookRef.off(); // Make sure we remove all previous listeners.
+  if (!this.auth.currentUser) { // Clear User Name - if not signing in!
+      alert('Not signing in!');
+  } else {
+    var currentUser = this.auth.currentUser;
+    alert(currentUser.displayName);
+  }
+};
+
+LiveCards.prototype.likeClick = function(clickID) {
+  var badgeID = 'bg.' + clickID.substr(3);
+  console.log("like: " + badgeID);
+  var likeCount = 0;
+  likeCount++;
+  var likeBadge = document.getElementById(badgeID);
+  likeBadge.setAttribute('data-badge', '+1');
+  likeBadge.className = likeBadge.className + " show";
+  setTimeout(function(){ likeBadge.className = likeBadge.className.replace(" show", ""); }, 2300);
+}
+
+LiveCards.prototype.shareClick = function(clickID) {
+  console.log("share: " + clickID.substr(3));
+}
+
 $(document).ready(function() {
-  $(document).on('click', '.co-writer', addNewCard());
-
-  $(document).on('click', '.like-button', function() {
-    var keyID = this.id.substr(3);
-    var badgeID = 'bg.' + keyID;
-    var likeCount = 0;
-    likeCount++;
-    var likeBadge = document.getElementById(badgeID);
-    likeBadge.setAttribute('data-badge', '+1');
-    likeBadge.className = likeBadge.className + " show";
-    setTimeout(function(){ likeBadge.className = likeBadge.className.replace(" show", ""); }, 2300);
-  });
-
-  $(document).on('click', '.share-button', function() {
-    console.log(this.id);
-    var shareID = this.id.substr(3);
-    console.log(shareID);
-  });
+  $(document).on('click', '.co-writer', function() { window.livecards.coWritingClick(this.id); });
+  $(document).on('click', '.like-button', function(){ window.livecards.likeClick(this.id); });
+  $(document).on('click', '.share-button', function(){ window.livecards.shareClick(this.id); });
 });
 
 window.onload = function() {
