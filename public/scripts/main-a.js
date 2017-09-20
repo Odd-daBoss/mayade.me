@@ -763,7 +763,9 @@ LiveCards.prototype.addNewCard = function() {
     this.functionButton.setAttribute('hidden', 'true');
   } else {
     console.log(buttonMain);
-    if (buttonMain.innerHTML == "lock") buttonMain.innerHTML = "create";
+    if (buttonMain.innerHTML == "lock") {
+      buttonMain.innerHTML = "create";
+    }
     // Sign in Firebase using popup auth and Google as the identity provider.
     var provider = new firebase.auth.GoogleAuthProvider();
     this.auth.signInWithPopup(provider);
@@ -909,7 +911,7 @@ LiveCards.prototype.onAuthStateChanged = function(user) {
     this.profileChip.removeAttribute('hidden');
     var loopMoreButton = document.getElementById("loop-more");
     loopMoreButton.className = loopMoreButton.className.replace("add-padding", "");
-    this.functionButton.removeAttribute('hidden');
+    //this.functionButton.removeAttribute('hidden');
     var buttonMain = document.getElementById('icon-main');
     if (buttonMain.innerHTML == "lock") {
       buttonMain.innerHTML = "create";
@@ -935,6 +937,25 @@ LiveCards.prototype.checkSetup = function() {
 
 LiveCards.prototype.coWritingClick = function(clickID) {
   console.log("coWriter: " + clickID.substr(3));
+  scroll(0,0);
+  var buttonMain = document.getElementById('icon-main');
+  if (!this.auth.currentUser) {
+    if (buttonMain.innerHTML == "lock") {
+      buttonMain.innerHTML = "create";
+    }
+    // Sign in Firebase using popup auth and Google as the identity provider.
+    var provider = new firebase.auth.GoogleAuthProvider();
+    this.auth.signInWithPopup(provider);
+  }
+  this.inputBlock.removeAttribute('hidden');
+  this.functionButton.setAttribute('hidden', 'true');
+  this.dataRef = this.database.ref('book-20170808165000/' + clickID.substr(3));
+  this.dataRef.once('value').then(function(snapshot) {
+    var writerName = (snapshot.val().name);
+    var titleName = (snapshot.val().title);
+    console.log(writerName + " " + titleName);
+  });
+  /*
   this.bookRef = this.database.ref('book-20170808165000'); // Reference to the database path.
   this.bookRef.off(); // Make sure we remove all previous listeners.
   if (!this.auth.currentUser) { // Clear User Name - if not signing in!
@@ -943,6 +964,7 @@ LiveCards.prototype.coWritingClick = function(clickID) {
     var currentUser = this.auth.currentUser;
     alert(currentUser.displayName);
   }
+  */
 };
 
 LiveCards.prototype.likeClick = function(clickID) {
