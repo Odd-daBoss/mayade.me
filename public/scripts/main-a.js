@@ -6,8 +6,6 @@ function LiveCards() {
   // Shortcuts to DOM Elements.
   this.storyList0 = document.getElementById('story-list-0');
   this.imageUpload = document.getElementById('image-upload');
-  this.titleStory = document.getElementById('title-story');
-  this.contentStory = document.getElementById('content-story');
   this.profilePic = document.getElementById('profile-pic');
   this.profileName = document.getElementById('profile-name');
   this.signOutButton = document.getElementById('sign-out');
@@ -19,9 +17,13 @@ function LiveCards() {
   this.nextButton = document.getElementById('next-button');
   this.prevButton = document.getElementById('prev-button');
   this.titleStory = document.getElementById('title-story');
+  this.divTitle = document.getElementById('div-title');
   this.contentStory = document.getElementById('content-story');
+  this.divContent = document.getElementById('div-content');
   this.quoteStory = document.getElementById('quote-story');
+  this.divQuote = document.getElementById('div-quote');
   this.endingStory = document.getElementById('ending-story');
+  this.divEnding = document.getElementById('div-ending');
   this.functionButton = document.getElementById('function-button');
   this.scrollSwitch = document.getElementById('scroll-switch');
   this.imageSwitch = document.getElementById('image-switch');
@@ -432,6 +434,22 @@ LiveCards.IMAGE_PROGRESSBAR =
     '<div class="auxbar bar bar3" style="width: 0%;"></div>' +
   '</div>' +
   '</div>';
+
+LiveCards.DIV_TITLE =
+  '<textarea class="mdl-textfield__input" type="text" rows="1" id="title-story"></textarea>' +
+  '<label class="mdl-textfield__label" for="title-story">Title</label>';
+
+LiveCards.DIV_CONTENT =
+  '<textarea class="mdl-textfield__input" type="text" rows="3" id="content-story"></textarea>' +
+  '<label class="mdl-textfield__label" for="content-story">Story</label>';
+
+LiveCards.DIV_QUOTE =
+  '<textarea class="mdl-textfield__input" type="text" rows="1" id="quote-story"></textarea>' +
+  '<label class="mdl-textfield__label" for="quote-story">Quote</label>';
+
+LiveCards.DIV_ENDING =
+  '<textarea class="mdl-textfield__input" type="text" rows="3" id="ending-story"></textarea>' +
+  '<label class="mdl-textfield__label" for="ending-story">Ending</label>';
 
 // Displays a Story in the UI.
 LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
@@ -951,10 +969,18 @@ LiveCards.prototype.coWritingClick = function(clickID) {
   this.functionButton.setAttribute('hidden', 'true');
   this.dataRef = this.database.ref('book-20170808165000/' + clickID.substr(3));
   this.dataRef.once('value').then(function(snapshot) {
-    var writerName = (snapshot.val().name);
-    var titleName = (snapshot.val().title);
-    console.log(writerName + " " + titleName);
-  });
+    var recordName = (snapshot.val().name);
+    var recordPhoto = (snapshot.val().photoUrl);
+    var recordImage = (snapshot.val().imageUrl);
+    var recordTitle = (snapshot.val().title);
+    var recordContent = (snapshot.val().content);
+    var recordQuote = (snapshot.val().quote);
+    var recordEnding = (snapshot.val().ending);
+    this.divTitle.innerHTML = recordTitle;
+    this.divContent.innerHTML = recordContent;
+    this.divQuote.innerHTML = recordQuote;
+    this.divEnding.innerHTML = recordEnding;
+  }.bind(this));
   /*
   this.bookRef = this.database.ref('book-20170808165000'); // Reference to the database path.
   this.bookRef.off(); // Make sure we remove all previous listeners.
