@@ -83,10 +83,17 @@ html, body {
     from {bottom: 30px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
 }
-.user-pic, .co-user-pic, #profile-pic {
+.user-pic, #profile-pic {
   background-image: url('./../images/profile_placeholder.svg');
   background-repeat: no-repeat;
   background-size: cover;
+}
+.users-container {
+  padding: 8px;
+}
+.users-container > .mdl-button--icon {
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 #loop-more {
   text-align: center;

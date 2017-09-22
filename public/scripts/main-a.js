@@ -35,6 +35,9 @@ function LiveCards() {
   this.storySwitch = document.getElementById('story-switch');
   this.bottomToast = document.getElementById('bottom-toast');
   this.msgToast = document.getElementById('msg-toast');
+  this.storyIcon = document.getElementById('story-icon');
+  this.fastStory = document.getElementById('fast-story');
+  this.imageIcon = document.getElementById('image-icon');
 
   this.storyForm.addEventListener('submit', this.saveStory.bind(this));
   this.addCard.addEventListener('click', this.addNewCard.bind(this));
@@ -107,30 +110,28 @@ LiveCards.prototype.scrollMode = function() {
 };
 
 LiveCards.prototype.imageMode = function() {
-  var imageIcon = document.getElementById('image-icon');
   if (this.imageSwitch.checked) {
     console.log("IMG checked!");
-    imageIcon.innerHTML = "camera_alt";
+    this.imageIcon.innerHTML = "camera_alt";
     this.imageUpload.accept = "image/*";
     this.imageUpload.capture = "camera";
   } else {
     console.log("IMG un-checked!");
-    imageIcon.innerHTML = "image_upload";
+    this.imageIcon.innerHTML = "image_upload";
     this.imageUpload.accept = "image/*;capture=camera";
   }
 };
 
-LiveCards.prototype.storyMode = function () {
-  var storyIcon = document.getElementById('story-icon');
-  var fastStory = document.getElementById('fast-story');
+LiveCards.prototype.storyMode = function(event) {
+  event.preventDefault();
   if (this.storySwitch.checked) {
     console.log("STORY checked!");
-    fastStory.setAttribute('hidden', 'true');
-    storyIcon.innerHTML = "near_me";
+    this.fastStory.setAttribute('hidden', 'true');
+    this.storyIcon.innerHTML = "near_me";
   } else {
     console.log("STORY un-checked!");
-    fastStory.removeAttribute('hidden');
-    storyIcon.innerHTML = "send";
+    this.fastStory.removeAttribute('hidden');
+    this.storyIcon.innerHTML = "send";
   }
 };
 
@@ -201,7 +202,7 @@ LiveCards.prototype.initBook = function() {
   var n = 3; // Set initial display lot.
   var keyTrk = document.getElementById('key'); // Get loop key-tracker.
   var iniStory = function(data, prevKey) {
-    var val = data.val();
+    var recordValue = data.val();
     console.log('iniStory INIed: ' + data.key + ' PrevKEY: ' + prevKey);
     if (!prevKey) {
       console.log('!prevKey | i: ' + i);
@@ -211,13 +212,13 @@ LiveCards.prototype.initBook = function() {
       nxtkeyDiv.setAttribute('id','#'+data.key);
     }
     console.log('call initDisplay: ' + data.key);
-    this.initDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.initDisplay(data.key, recordValue);
   }.bind(this);
 
   var chgStory = function(data, prevKey) {
-    var val = data.val();
+    var recordValue = data.val();
     console.log('chgStory CHGed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.editDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.editDisplay(data.key, recordValue);
   }.bind(this);
 
   // Read the last (1) story and listen to: added * changed * removed.
@@ -327,7 +328,7 @@ LiveCards.prototype.loopBook = function() {
   console.log('keyID: ' + keyID);
 
   var setStory = function(data, prevKey) {
-    var val = data.val();
+    var recordValue = data.val();
     console.log('setStory Loaded: ' + data.key + ' PrevKEY: ' + prevKey);
     if (!prevKey) {
       console.log('!prevKey | i: ' + i);
@@ -337,19 +338,19 @@ LiveCards.prototype.loopBook = function() {
       nxtkeyDiv.setAttribute('id','#'+data.key);
     }
     console.log('call loadDisplay: ' + data.key);
-    this.loadDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.loadDisplay(data.key, recordValue);
   }.bind(this);
 
   var addStory = function(data, prevKey) {
-    var val = data.val();
+    var recordValue = data.val();
     console.log('newStory ADDed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.liveDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.liveDisplay(data.key, recordValue);
   }.bind(this);
 
   var chgStory = function(data, prevKey) {
-    var val = data.val();
+    var recordValue = data.val();
     console.log('chgStory CHGed: ' + data.key + ' PrevKEY: ' + prevKey);
-    this.editDisplay(data.key, val.title, val.content, val.quote, val.ending, val.name, val.photoUrl, val.imageUrl, val.date, val.ddmmyy);
+    this.editDisplay(data.key, recordValue);
   }.bind(this);
 
   i++; // Read block of (n) stories.
@@ -397,16 +398,28 @@ LiveCards.STORY_TEMPLATE =
       '<div class="mdl-card__title">' +
         '<h1 class="title mdl-card__title-text mdl-color-text--blue-grey-300"></h1>' +
       '</div>' +
-      '<div class="mdl-card__actions">' +
+      '<div class="users-container">' +
         '<span class="mdl-chip mdl-chip--contact">' +
           '<span class="mdl-chip__contact user-pic"></span>' +
           '<span class="mdl-chip__text user-name"></span>' +
         '</span>' +
-          '<span hidden class="co-chip mdl-chip mdl-chip--contact">' +
-            '<span class="mdl-chip__contact co-user-pic"></span>' +
-            '<span class="mdl-chip__text co-user-name"></span>' +
-          '</span>' +
-        '<button class="co-writer mdl-button mdl-button--icon mdl-button--colored"><i class="material-icons">person_add</i></button>' +
+        '<span class="mdl-chip mdl-chip--contact">' +
+          '<span class="mdl-chip__contact user-pic"></span>' +
+          '<span class="mdl-chip__text user-name"></span>' +
+        '</span>' +
+        '<span class="mdl-chip mdl-chip--contact">' +
+          '<span class="mdl-chip__contact user-pic"></span>' +
+          '<span class="mdl-chip__text user-name"></span>' +
+        '</span>' +
+        '<span class="mdl-chip mdl-chip--contact">' +
+          '<span class="mdl-chip__contact user-pic"></span>' +
+          '<span class="mdl-chip__text user-name"></span>' +
+        '</span>' +
+        '<span class="mdl-chip mdl-chip--contact">' +
+          '<span class="mdl-chip__contact user-pic"></span>' +
+          '<span class="mdl-chip__text user-name"></span>' +
+        '</span>' +
+        '<button class="co-writer mdl-button mdl-button--icon mdl-button--colored" hidden><i class="material-icons">person_add</i></button>' +
       '</div>' +
       '<div class="mdl-card__supporting-text">' +
         '<p class="content"></p>' +
@@ -440,28 +453,12 @@ LiveCards.IMAGE_PROGRESSBAR =
   '</div>' +
   '</div>';
 
-LiveCards.DIV_TITLE =
-  '<textarea class="mdl-textfield__input" type="text" rows="1" id="title-story"></textarea>' +
-  '<label class="mdl-textfield__label" for="title-story">Title</label>';
-
-LiveCards.DIV_CONTENT =
-  '<textarea class="mdl-textfield__input" type="text" rows="3" id="content-story"></textarea>' +
-  '<label class="mdl-textfield__label" for="content-story">Story</label>';
-
-LiveCards.DIV_QUOTE =
-  '<textarea class="mdl-textfield__input" type="text" rows="1" id="quote-story"></textarea>' +
-  '<label class="mdl-textfield__label" for="quote-story">Quote</label>';
-
-LiveCards.DIV_ENDING =
-  '<textarea class="mdl-textfield__input" type="text" rows="3" id="ending-story"></textarea>' +
-  '<label class="mdl-textfield__label" for="ending-story">Ending</label>';
-
 // Displays a Story in the UI.
-LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
+LiveCards.prototype.initDisplay = function(key, value) {
   console.log('key* :' + key);
-  console.log('title* :' + title);
+  console.log('title* :' + value.title);
   var div = document.getElementById(key);
-  var storyDate = date;
+  var storyDate = value.date;
   // If an element for that story does not exists yet we create it.
   if (!div) { //Displaying new story.
     var fDate = document.getElementById("story-list-0").getElementsByClassName("dateTime")[0];
@@ -474,18 +471,10 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
     container.innerHTML = LiveCards.STORY_TEMPLATE;
     div = container.firstChild;
     div.setAttribute('id', key);
-    div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-    div.getElementsByClassName("user-name")[0].innerHTML = name;
-    div.getElementsByClassName("dateTime")[0].innerHTML = date;
-    div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
-    var likeID = div.getElementsByClassName("like-button")[0];
-    likeID.setAttribute('id', 'lk.'+key);
-    var badgeID = div.getElementsByClassName("like-badge")[0];
-    badgeID.setAttribute('id', 'bg.'+key);
-    var shareID = div.getElementsByClassName("share-button")[0];
-    shareID.setAttribute('id', 'sh.'+key);
-    var coWriteID = div.getElementsByClassName("co-writer")[0];
-    coWriteID.setAttribute('id', 'co.'+key);
+    div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + value.photoUrl + ')';
+    div.getElementsByClassName("user-name")[0].innerHTML = value.name;
+    div.getElementsByClassName("dateTime")[0].innerHTML = value.date;
+    div.getElementsByClassName("readTime")[0].innerHTML = value.ddmmyy;
     if (storyDate > firstDate) {
       this.msgToaster("Adding story");
       if (!this.scrollSwitch.checked) {
@@ -508,8 +497,18 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
       scrZ.setAttribute('id',z);
     }
   }
-  if (!imageUri) { // If the story has NO-image.
+  var likeMe = div.getElementsByClassName("like-button")[0];
+  likeMe.setAttribute('id', 'lk.'+key);
+  var badgeMe = div.getElementsByClassName("like-badge")[0];
+  badgeMe.setAttribute('id', 'bg.'+key);
+  var shareMe = div.getElementsByClassName("share-button")[0];
+  shareMe.setAttribute('id', 'sh.'+key);
+  var coWriteMe = div.getElementsByClassName("co-writer")[0];
+  coWriteMe.setAttribute('id', 'co.'+key);
+  if (!value.imageUri) { // If the story has NO-image.
       div.getElementsByClassName("storyImage")[0].innerHTML = '';
+      console.log('coWrite-no-hidden!');
+      coWriteMe.removeAttribute('hidden');
   } else { // If the story has an image.
     div.getElementsByClassName("storyImage")[0].innerHTML = LiveCards.IMAGE_PROGRESSBAR;
     var image = document.createElement('img');
@@ -517,37 +516,75 @@ LiveCards.prototype.initDisplay = function(key, title, content, quote, ending, n
       // Remove MDL Progress Bar when done!
       div.getElementsByClassName("materialBar")[0].innerHTML = '';
     }.bind(this));
-    this.setImageUrl(imageUri, image);
+    this.setImageUri(value.imageUri, image);
     div.getElementsByClassName("storyImage")[0].appendChild(image);
   }
-  if (!title) { // If the story has NO-title.
+  if (!value.title) { // If the story has NO-title.
     div.getElementsByClassName("title")[0].innerHTML = '';
+    console.log('coWrite-no-hidden!');
+    coWriteMe.removeAttribute('hidden');
   } else { // If the story has a title.
-    var htmlTitle = title.replace(/\n/g, '<br>');
+    var htmlTitle = value.title.replace(/\n/g, '<br>');
     div.getElementsByClassName("title")[0].innerHTML = htmlTitle;
   }
-  if (!content) { // If the story has NO-content.
+  if (!value.content) { // If the story has NO-content.
     div.getElementsByClassName("content")[0].innerHTML = '';
+    console.log('coWrite-no-hidden!');
+    coWriteMe.removeAttribute('hidden');
   } else { // If the story has a content.
-    var htmlContent = content.replace(/\n/g, '<br>');
+    var htmlContent = value.content.replace(/\n/g, '<br>');
     div.getElementsByClassName("content")[0].innerHTML = htmlContent;
   }
-  if (!quote) { // If the story has NO-quote.
+  if (!value.quote) { // If the story has NO-quote.
     div.getElementsByClassName("w3-panel")[0].setAttribute('hidden', 'true');
+    console.log('coWrite-no-hidden!');
+    coWriteMe.removeAttribute('hidden');
   } else { // If the story has a quote.
-    var htmlQuote = quote.replace(/\n/g, '<br>');
+    var htmlQuote = value.quote.replace(/\n/g, '<br>');
     div.getElementsByClassName("quote")[0].innerHTML = htmlQuote;
   }
-  if (!ending) { // If the story has NO-ending.
+  if (!value.ending) { // If the story has NO-ending.
     div.getElementsByClassName("ending")[0].innerHTML = '';
+    console.log('coWrite-no-hidden!');
+    coWriteMe.removeAttribute('hidden');
   } else { // If the story has a ending.
-    var htmlEnding = ending.replace(/\n/g, '<br>');
+    var htmlEnding = value.ending.replace(/\n/g, '<br>');
     div.getElementsByClassName("ending")[0].innerHTML = htmlEnding;
+  }
+  if (!value.coWriterA) {
+    div.getElementsByClassName("mdl-chip")[1].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+  } else {
+    div.getElementsByClassName("user-pic")[1].style.backgroundImage = 'url(' + value.photoUrlA + ')';
+    div.getElementsByClassName("user-name")[1].innerHTML = value.coWriterA;
+  }
+  if (!value.coWriterB) {
+    div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+  } else {
+    div.getElementsByClassName("user-pic")[2].style.backgroundImage = 'url(' + value.photoUrlB + ')';
+    div.getElementsByClassName("user-name")[2].innerHTML = value.coWriterB;
+  }
+  if (!value.coWriterC) {
+    div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+  } else {
+    div.getElementsByClassName("user-pic")[3].style.backgroundImage = 'url(' + value.photoUrlC + ')';
+    div.getElementsByClassName("user-name")[3].innerHTML = value.coWriterC;
+  }
+  if (!value.coWriterD) {
+    div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+  } else {
+    div.getElementsByClassName("user-pic")[4].style.backgroundImage = 'url(' + value.photoUrlD + ')';
+    div.getElementsByClassName("user-name")[4].innerHTML = value.coWriterD;
   }
 };
 
 // Displays a Story in the UI.
-LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
+LiveCards.prototype.loadDisplay = function(key, value) {
   var m = document.getElementsByClassName("all-records")[0].id;
   var n = document.getElementsByClassName("scr-display")[0].id;
   var finish = document.getElementsByClassName("fin-records")[0].id;
@@ -571,7 +608,7 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
     }
     loopList.scrollIntoView();
     var div = document.getElementById(key); // Get story div.
-    var storyDate = date; // Get story date.
+    var storyDate = value.date; // Get story date.
     if (!div) { // If an element for that story does not exists yet we create it.
       var fDate = document.getElementById(listName).getElementsByClassName("dateTime")[0];
       if (fDate) {
@@ -584,25 +621,26 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
         container.innerHTML = LiveCards.STORY_TEMPLATE;
         div = container.firstChild;
         div.setAttribute('id', key);
-        div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-        div.getElementsByClassName("user-name")[0].innerHTML = name;
-        div.getElementsByClassName("dateTime")[0].innerHTML = date;
-        div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
-        var likeID = div.getElementsByClassName("like-button")[0];
-        likeID.setAttribute('id', 'lk.'+key);
-        var badgeID = div.getElementsByClassName("like-badge")[0];
-        badgeID.setAttribute('id', 'bg.'+key);
-        var shareID = div.getElementsByClassName("share-button")[0];
-        shareID.setAttribute('id', 'sh.'+key);
-        var coWriteID = div.getElementsByClassName("co-writer")[0];
-        coWriteID.setAttribute('id', 'co.'+key);
+        div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + value.photoUrl + ')';
+        div.getElementsByClassName("user-name")[0].innerHTML = value.name;
+        div.getElementsByClassName("dateTime")[0].innerHTML = value.date;
+        div.getElementsByClassName("readTime")[0].innerHTML = value.ddmmyy;
+        var likeMe = div.getElementsByClassName("like-button")[0];
+        likeMe.setAttribute('id', 'lk.'+key);
+        var badgeMe = div.getElementsByClassName("like-badge")[0];
+        badgeMe.setAttribute('id', 'bg.'+key);
+        var shareMe = div.getElementsByClassName("share-button")[0];
+        shareMe.setAttribute('id', 'sh.'+key);
+        var coWriteMe = div.getElementsByClassName("co-writer")[0];
+        coWriteMe.setAttribute('id', 'co.'+key);
         loopList.insertBefore(div,loopList.firstChild);
         var z = document.getElementsByClassName("scr-display")[0].id;
         var scrZ = document.getElementsByClassName("scr-display")[0];
         z++;
         scrZ.setAttribute('id',z);
-        if (!imageUri) { // If the story has NO-image.
+        if (!value.imageUri) { // If the story has NO-image.
           div.getElementsByClassName("storyImage")[0].innerHTML = '';
+          coWriteMe.removeAttribute('hidden');
         } else { // If the story has an image.
           div.getElementsByClassName("storyImage")[0].innerHTML = LiveCards.IMAGE_PROGRESSBAR;
           var image = document.createElement('img');
@@ -610,32 +648,66 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
             // Remove MDL Progress Bar when done!
             div.getElementsByClassName("materialBar")[0].innerHTML = '';
           }.bind(this));
-          this.setImageUrl(imageUri, image);
+          this.setImageUri(value.imageUri, image);
           div.getElementsByClassName("storyImage")[0].appendChild(image);
         }
-        if (!title) { // If the story has NO-title.
+        if (!value.title) { // If the story has NO-title.
           div.getElementsByClassName("title")[0].innerHTML = '';
+          coWriteMe.removeAttribute('hidden');
         } else { // If the story has a title.
-          var htmlTitle = title.replace(/\n/g, '<br>');
+          var htmlTitle = value.title.replace(/\n/g, '<br>');
           div.getElementsByClassName("title")[0].innerHTML = htmlTitle;
         }
-        if (!content) { // It the story has NO-content.
+        if (!value.content) { // It the story has NO-content.
           div.getElementsByClassName("content")[0].innerHTML = '';
+          coWriteMe.removeAttribute('hidden');
         } else { // It the story has a content.
-          var htmlContent = content.replace(/\n/g, '<br>');
+          var htmlContent = value.content.replace(/\n/g, '<br>');
           div.getElementsByClassName("content")[0].innerHTML = htmlContent;
         }
-        if (!quote) { // If the story has NO-quote.
+        if (!value.quote) { // If the story has NO-quote.
           div.getElementsByClassName("w3-panel")[0].setAttribute('hidden', 'true');
+          coWriteMe.removeAttribute('hidden');
         } else { // If the story has a quote.
-          var htmlQuote = quote.replace(/\n/g, '<br>');
+          var htmlQuote = value.quote.replace(/\n/g, '<br>');
           div.getElementsByClassName("quote")[0].innerHTML = htmlQuote;
         }
-        if (!ending) { // If the story has NO-ending.
+        if (!value.ending) { // If the story has NO-ending.
           div.getElementsByClassName("ending")[0].innerHTML = '';
+          coWriteMe.removeAttribute('hidden');
         } else { // If the story has a ending.
-          var htmlEnding = ending.replace(/\n/g, '<br>');
+          var htmlEnding = value.ending.replace(/\n/g, '<br>');
           div.getElementsByClassName("ending")[0].innerHTML = htmlEnding;
+        }
+        if (!value.coWriterA) {
+          div.getElementsByClassName("mdl-chip")[1].setAttribute('hidden', 'true');
+          div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
+          div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+          div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+        } else {
+          div.getElementsByClassName("user-pic")[1].style.backgroundImage = 'url(' + value.photoUrlA + ')';
+          div.getElementsByClassName("user-name")[1].innerHTML = value.coWriterA;
+        }
+        if (!value.coWriterB) {
+          div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
+          div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+          div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+        } else {
+          div.getElementsByClassName("user-pic")[2].style.backgroundImage = 'url(' + value.photoUrlB + ')';
+          div.getElementsByClassName("user-name")[2].innerHTML = value.coWriterB;
+        }
+        if (!value.coWriterC) {
+          div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+          div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+        } else {
+          div.getElementsByClassName("user-pic")[3].style.backgroundImage = 'url(' + value.photoUrlC + ')';
+          div.getElementsByClassName("user-name")[3].innerHTML = value.coWriterC;
+        }
+        if (!value.coWriterD) {
+          div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+        } else {
+          div.getElementsByClassName("user-pic")[4].style.backgroundImage = 'url(' + value.photoUrlD + ')';
+          div.getElementsByClassName("user-name")[4].innerHTML = value.coWriterD;
         }
       }
     }
@@ -643,11 +715,11 @@ LiveCards.prototype.loadDisplay = function(key, title, content, quote, ending, n
 };
 
 // Displays a Story in the UI.
-LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
+LiveCards.prototype.liveDisplay = function(key, value) {
   console.log('live key* :' + key);
-  console.log('live title* :' + title);
+  console.log('live title* :' + value.title);
   var div = document.getElementById(key);
-  var storyDate = date; // If an element for that story does not exists yet we create it.
+  var storyDate = value.date; // If an element for that story does not exists yet we create it.
   if (!div) { //Displaying new story.
     var fDate = document.getElementById("story-list-0").getElementsByClassName("dateTime")[0];
     if (fDate) {
@@ -659,18 +731,10 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
     container.innerHTML = LiveCards.STORY_TEMPLATE;
     div = container.firstChild;
     div.setAttribute('id', key);
-    div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + picUrl + ')';
-    div.getElementsByClassName("user-name")[0].innerHTML = name;
-    div.getElementsByClassName("dateTime")[0].innerHTML = date;
-    div.getElementsByClassName("readTime")[0].innerHTML = ddmmyy;
-    var likeID = div.getElementsByClassName("like-button")[0];
-    likeID.setAttribute('id', 'lk.'+key);
-    var badgeID = div.getElementsByClassName("like-badge")[0];
-    badgeID.setAttribute('id', 'bg.'+key);
-    var shareID = div.getElementsByClassName("share-button")[0];
-    shareID.setAttribute('id', 'sh.'+key);
-    var coWriteID = div.getElementsByClassName("co-writer")[0];
-    coWriteID.setAttribute('id', 'co.'+key);
+    div.getElementsByClassName("user-name")[0].style.backgroundImage = 'url(' + value.photoUrl + ')';
+    div.getElementsByClassName("user-pic")[0].innerHTML = value.name;
+    div.getElementsByClassName("dateTime")[0].innerHTML = value.date;
+    div.getElementsByClassName("readTime")[0].innerHTML = value.ddmmyy;
     if (storyDate > firstDate) {
       if (document.body.scrollTop > 0) {
         this.msgToaster("Adding story");
@@ -696,8 +760,17 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
       scrZ.setAttribute('id',z);
     }
   }
-  if (!imageUri) { // If the story has NO-image.
+  var likeMe = div.getElementsByClassName("like-button")[0];
+  likeMe.setAttribute('id', 'lk.'+key);
+  var badgeMe = div.getElementsByClassName("like-badge")[0];
+  badgeMe.setAttribute('id', 'bg.'+key);
+  var shareMe = div.getElementsByClassName("share-button")[0];
+  shareMe.setAttribute('id', 'sh.'+key);
+  var coWriteMe = div.getElementsByClassName("co-writer")[0];
+  coWriteMe.setAttribute('id', 'co.'+key);
+  if (!value.imageUri) { // If the story has NO-image.
       div.getElementsByClassName("storyImage")[0].innerHTML = '';
+      coWriteMe.removeAttribute('hidden');
   } else { // If the story has an image.
     div.getElementsByClassName("storyImage")[0].innerHTML = LiveCards.IMAGE_PROGRESSBAR;
     var image = document.createElement('img');
@@ -705,40 +778,74 @@ LiveCards.prototype.liveDisplay = function(key, title, content, quote, ending, n
       // Remove MDL Progress Bar when done!
       div.getElementsByClassName("materialBar")[0].innerHTML = '';
     }.bind(this));
-    this.setImageUrl(imageUri, image);
+    this.setImageUri(value.imageUri, image);
     div.getElementsByClassName("storyImage")[0].appendChild(image);
   }
-  if (!title) { // If the story has NO-title.
+  if (!value.title) { // If the story has NO-title.
     div.getElementsByClassName("title")[0].innerHTML = '';
+    coWriteMe.removeAttribute('hidden');
   } else { // If the story has a title.
-    var htmlTitle = title.replace(/\n/g, '<br>');
+    var htmlTitle = value.title.replace(/\n/g, '<br>');
     div.getElementsByClassName("title")[0].innerHTML = htmlTitle;
   }
-  if (!content) { // It the story has NO-content.
+  if (!value.content) { // It the story has NO-content.
     div.getElementsByClassName("content")[0].innerHTML = '';
+    coWriteMe.removeAttribute('hidden');
   } else { // It the story has a content.
-    var htmlContent = content.replace(/\n/g, '<br>');
+    var htmlContent = value.content.replace(/\n/g, '<br>');
     div.getElementsByClassName("content")[0].innerHTML = htmlContent;
   }
-  if (!quote) { // If the story has NO-quote.
+  if (!value.quote) { // If the story has NO-quote.
     div.getElementsByClassName("w3-panel")[0].setAttribute('hidden', 'true');
+    coWriteMe.removeAttribute('hidden');
   } else { // If the story has a quote.
-    var htmlQuote = quote.replace(/\n/g, '<br>');
+    var htmlQuote = value.quote.replace(/\n/g, '<br>');
     div.getElementsByClassName("quote")[0].innerHTML = htmlQuote;
   }
-  if (!ending) { // If the story has NO-ending.
+  if (!value.ending) { // If the story has NO-ending.
     div.getElementsByClassName("ending")[0].innerHTML = '';
+    coWriteMe.removeAttribute('hidden');
   } else { // If the story has a ending.
-    var htmlEnding = ending.replace(/\n/g, '<br>');
+    var htmlEnding = value.ending.replace(/\n/g, '<br>');
     div.getElementsByClassName("ending")[0].innerHTML = htmlEnding;
+  }
+  if (!value.coWriterA) {
+    div.getElementsByClassName("mdl-chip")[1].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+  } else {
+    div.getElementsByClassName("user-pic")[1].style.backgroundImage = 'url(' + value.photoUrlA + ')';
+    div.getElementsByClassName("user-name")[1].innerHTML = value.coWriterA;
+  }
+  if (!value.coWriterB) {
+    div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+  } else {
+    div.getElementsByClassName("user-pic")[2].style.backgroundImage = 'url(' + value.photoUrlB + ')';
+    div.getElementsByClassName("user-name")[2].innerHTML = value.coWriterB;
+  }
+  if (!value.coWriterC) {
+    div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+    div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+  } else {
+    div.getElementsByClassName("user-pic")[3].style.backgroundImage = 'url(' + value.photoUrlC + ')';
+    div.getElementsByClassName("user-name")[3].innerHTML = value.coWriterC;
+  }
+  if (!value.coWriterD) {
+    div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+  } else {
+    div.getElementsByClassName("user-pic")[4].style.backgroundImage = 'url(' + value.photoUrlD + ')';
+    div.getElementsByClassName("user-name")[4].innerHTML = value.coWriterD;
   }
 };
 
 // Correcting Displayed Story in the UI.
-LiveCards.prototype.editDisplay = function(key, title, content, quote, ending, name, picUrl, imageUri, date, ddmmyy) {
+LiveCards.prototype.editDisplay = function(key, value) {
   var div = document.getElementById(key);
   if (div) {
-    if (!imageUri) { // If the story has NO-image.
+    if (!value.imageUri) { // If the story has NO-image.
       div.getElementsByClassName("storyImage")[0].innerHTML = '';
     } else { // If the story has an image.
       div.getElementsByClassName("storyImage")[0].innerHTML = LiveCards.IMAGE_PROGRESSBAR;
@@ -747,31 +854,31 @@ LiveCards.prototype.editDisplay = function(key, title, content, quote, ending, n
         // Remove MDL Progress Bar when done!
         div.getElementsByClassName("materialBar")[0].innerHTML = '';
       }.bind(this));
-      this.setImageUrl(imageUri, image);
+      this.setImageUri(value.imageUri, image);
       div.getElementsByClassName("storyImage")[0].appendChild(image);
     }
-    if (!title) { // If the story has NO-title.
+    if (!value.title) { // If the story has NO-title.
       div.getElementsByClassName("title")[0].innerHTML = '';
     } else { // If the story has a title.
-      var htmlTitle = title.replace(/\n/g, '<br>');
+      var htmlTitle = value.title.replace(/\n/g, '<br>');
       div.getElementsByClassName("title")[0].innerHTML = htmlTitle;
     }
-    if (!content) { // It the story has NO-content.
+    if (!value.content) { // It the story has NO-content.
       div.getElementsByClassName("content")[0].innerHTML = '';
     } else { // It the story has a content.
-      var htmlContent = content.replace(/\n/g, '<br>');
+      var htmlContent = value.content.replace(/\n/g, '<br>');
       div.getElementsByClassName("content")[0].innerHTML = htmlContent;
     }
-    if (!quote) { // If the story has NO-quote.
+    if (!value.quote) { // If the story has NO-quote.
       div.getElementsByClassName("w3-panel")[0].setAttribute('hidden', 'true');
     } else { // If the story has a quote.
-      var htmlQuote = quote.replace(/\n/g, '<br>');
+      var htmlQuote = value.quote.replace(/\n/g, '<br>');
       div.getElementsByClassName("quote")[0].innerHTML = htmlQuote;
     }
-    if (!ending) { // If the story has NO-ending.
+    if (!value.ending) { // If the story has NO-ending.
       div.getElementsByClassName("ending")[0].innerHTML = '';
     } else { // If the story has a ending.
-      var htmlEnding = ending.replace(/\n/g, '<br>');
+      var htmlEnding = value.ending.replace(/\n/g, '<br>');
       div.getElementsByClassName("ending")[0].innerHTML = htmlEnding;
     }
   }
@@ -816,7 +923,7 @@ LiveCards.prototype.deleteNewCard = function() {
 };
 
 // Sets the URL of the given img element with the URL of the image stored in Cloud Storage.
-LiveCards.prototype.setImageUrl = function(imageUri, imgElement) {
+LiveCards.prototype.setImageUri = function(imageUri, imgElement) {
   // If the image is a Cloud Storage URI we fetch the URL.
   if (imageUri.startsWith('gs://')) {
     this.storage.refFromURL(imageUri).getMetadata().then(function(metadata) {
@@ -831,7 +938,7 @@ LiveCards.prototype.setImageUrl = function(imageUri, imgElement) {
 LiveCards.prototype.saveStory = function(event) {
   if (this.auth.currentUser) {
     event.preventDefault();
-    var file = document.getElementById('image-upload').files[0];
+    var file = this.imageUpload.files[0];
     if (file) {
       // Check that the user uploaded image or entered a title or any contents.
       if (this.imageUpload.value || this.titleStory.value || this.contentStory.value
@@ -863,7 +970,7 @@ LiveCards.prototype.saveStory = function(event) {
           return this.storage.ref(filePath).put(file).then(function(snapshot) {
             // Get the file's Storage URI and update the chat message placeholder.
             var fullPath = snapshot.metadata.fullPath;
-            return data.update({imageUrl: this.storage.ref(fullPath).toString()});
+            return data.update({imageUri: this.storage.ref(fullPath).toString()});
             }.bind(this));
           }.bind(this)).catch(function(error) {
               console.error('There was an error uploading a file to Cloud Storage:', error);
@@ -986,31 +1093,81 @@ LiveCards.prototype.coWritingClick = function(clickID) {
   this.dataRef.once('value').then(function(snapshot) {
     var recordName = (snapshot.val().name);
     var recordPhoto = (snapshot.val().photoUrl);
-    var recordImage = (snapshot.val().imageUrl);
+    var recordImage = (snapshot.val().imageUri);
     var recordTitle = (snapshot.val().title);
     var recordContent = (snapshot.val().content);
     var recordQuote = (snapshot.val().quote);
     var recordEnding = (snapshot.val().ending);
+    var recordWriterA = (snapshot.val().coWriterA);
+    var recordPhotoA = (snapshot.val().photoUrlA);
+    var recordWriterB = (snapshot.val().coWriterB);
+    var recordPhotoB = (snapshot.val().photoUrlB);
+    var recordWriterC = (snapshot.val().coWriterC);
+    var recordPhotoC = (snapshot.val().photoUrlC);
+    var recordWriterD = (snapshot.val().coWriterD);
+    var recordPhotoD = (snapshot.val().photoUrlD);
+
+    var div = document.getElementsByClassName("users-container")[0];
+    div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + recordPhoto + ')';
+    div.getElementsByClassName("user-name")[0].innerHTML = recordName;
+
+    if (recordImage) {
+
+    }
+    if (!recordWriterA) {
+      div.getElementsByClassName("mdl-chip")[1].setAttribute('hidden', 'true');
+      div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
+      div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+      div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+    } else {
+      div.getElementsByClassName("user-pic")[1].style.backgroundImage = 'url(' + recordPhotoA + ')';
+      div.getElementsByClassName("user-name")[1].innerHTML = value.recordWriterA;
+    }
+    if (!recordWriterB) {
+      div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
+      div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+      div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+    } else {
+      div.getElementsByClassName("user-pic")[2].style.backgroundImage = 'url(' + recordPhotoB + ')';
+      div.getElementsByClassName("user-name")[2].innerHTML = value.recordWriterB;
+    }
+    if (!recordWriterC) {
+      div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
+      div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+    } else {
+      div.getElementsByClassName("user-pic")[3].style.backgroundImage = 'url(' + recordPhotoC + ')';
+      div.getElementsByClassName("user-name")[3].innerHTML = value.recordWriterC;
+    }
+    if (!recordWriterD) {
+      div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
+    } else {
+      div.getElementsByClassName("user-pic")[4].style.backgroundImage = 'url(' + recordPhotoD + ')';
+      div.getElementsByClassName("user-name")[4].innerHTML = value.recordWriterD;
+    }
     if (recordTitle) {
-      this.divTitle.innerHTML = recordTitle;
+      this.titleStory.value = recordTitle;
+      this.divTitle.innerHTML = recordTitle.replace(/\n/g, '<br>');
       this.txtTitle.setAttribute('hidden', 'true');
     } else {
       this.divTitle.setAttribute('hidden', 'true');
     }
     if (recordContent) {
-      this.divContent.innerHTML = recordContent;
+      this.contentStory.value = recordContent;
+      this.divContent.innerHTML = recordContent.replace(/\n/g, '<br>');
       this.txtContent.setAttribute('hidden', 'true');
     } else {
       this.divContent.setAttribute('hidden', 'true');
     }
     if (recordQuote) {
-      this.divQuote.innerHTML = recordQuote;
+      this.quoteStory.value = recordQuote;
+      this.divQuote.innerHTML = recordQuote.replace(/\n/g, '<br>');
       this.txtQuote.setAttribute('hidden', 'true');
     } else {
       this.divQuote.setAttribute('hidden', 'true');
     }
     if (recordEnding) {
-      this.divEnding.innerHTML = recordEnding;
+      this.endingStory.value = recordEnding;
+      this.divEnding.innerHTML = recordEnding.replace(/\n/g, '<br>');
       this.txtEnding.setAttribute('hidden', 'true');
     } else {
       this.divEnding.setAttribute('hidden', 'true');
@@ -1034,7 +1191,7 @@ LiveCards.prototype.shareClick = function(clickID) {
 }
 
 $(document).ready(function() {
-  $(document).on('click', '.co-writer', function() { window.livecards.coWritingClick(this.id); });
+  $(document).on('click', '.co-writer', function(){ window.livecards.coWritingClick(this.id); });
   $(document).on('click', '.like-button', function(){ window.livecards.likeClick(this.id); });
   $(document).on('click', '.share-button', function(){ window.livecards.shareClick(this.id); });
 });
