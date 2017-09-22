@@ -1,0 +1,36 @@
+[debug] [2017-09-22T02:35:38.367Z] ----------------------------------------------------------------------
+[debug] [2017-09-22T02:35:38.371Z] Command:       /usr/bin/nodejs /home/odd/.npm-global/bin/firebase serve
+[debug] [2017-09-22T02:35:38.371Z] CLI Version:   3.12.0
+[debug] [2017-09-22T02:35:38.371Z] Platform:      linux
+[debug] [2017-09-22T02:35:38.371Z] Node Version:  v6.11.0
+[debug] [2017-09-22T02:35:38.372Z] Time:          Fri Sep 22 2017 09:35:38 GMT+0700 (+07)
+[debug] [2017-09-22T02:35:38.372Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2017-09-22T02:35:38.388Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2017-09-22T02:35:38.388Z] > authorizing via signed-in user
+[debug] [2017-09-22T02:35:38.391Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2017-09-22T02:35:38.391Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token { refresh_token: '1/9LYya984XvXpN6lC6f4zgS6rFnfwqmps53Zq07LLzy4nUmlUN2pvKbVFCQ_JCL69',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Fri Sep 22 2017 09:35:38 GMT+0700 (+07)
+[debug] [2017-09-22T02:35:38.736Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-22T02:35:38.742Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/live-feed-cards  
+ Fri Sep 22 2017 09:35:38 GMT+0700 (+07)
+[debug] [2017-09-22T02:35:40.034Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-22T02:35:40.037Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/live-feed-cards/tokens  
+ Fri Sep 22 2017 09:35:40 GMT+0700 (+07)
+[debug] [2017-09-22T02:35:41.105Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/home/odd/Working/mayade.me'...
+[info] 
+[debug] [2017-09-22T02:35:41.116Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/live-feed-cards  
+ Fri Sep 22 2017 09:35:41 GMT+0700 (+07)
+[debug] [2017-09-22T02:35:42.556Z] <<< HTTP RESPONSE 200
+[debug] [2017-09-22T02:35:42.558Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/287221611276/clients/_:getWebAppConfig  
+ Fri Sep 22 2017 09:35:42 GMT+0700 (+07)
+[debug] [2017-09-22T02:35:43.368Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+

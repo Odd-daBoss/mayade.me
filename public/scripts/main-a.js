@@ -14,16 +14,21 @@ function LiveCards() {
   this.deleteCard = document.getElementById('del-card');
   this.inputBlock = document.getElementById('input-block');
   this.storyForm = document.getElementById('story-form');
+  this.buttonMain = document.getElementById('button-main');
   this.nextButton = document.getElementById('next-button');
   this.prevButton = document.getElementById('prev-button');
   this.titleStory = document.getElementById('title-story');
   this.divTitle = document.getElementById('div-title');
+  this.txtTitle = document.getElementById('txt-title');
   this.contentStory = document.getElementById('content-story');
   this.divContent = document.getElementById('div-content');
+  this.txtContent = document.getElementById('txt-content');
   this.quoteStory = document.getElementById('quote-story');
   this.divQuote = document.getElementById('div-quote');
+  this.txtQuote = document.getElementById('txt-quote');
   this.endingStory = document.getElementById('ending-story');
   this.divEnding = document.getElementById('div-ending');
+  this.txtEnding = document.getElementById('txt-ending');
   this.functionButton = document.getElementById('function-button');
   this.scrollSwitch = document.getElementById('scroll-switch');
   this.imageSwitch = document.getElementById('image-switch');
@@ -775,14 +780,12 @@ LiveCards.prototype.editDisplay = function(key, title, content, quote, ending, n
 //Add a new card.
 LiveCards.prototype.addNewCard = function() {
   scroll(0,0);
-  var buttonMain = document.getElementById('icon-main');
   if (this.auth.currentUser) {
     this.inputBlock.removeAttribute('hidden');
     this.functionButton.setAttribute('hidden', 'true');
   } else {
-    console.log(buttonMain);
-    if (buttonMain.innerHTML == "lock") {
-      buttonMain.innerHTML = "create";
+    if (this.buttonMain.innerHTML == "lock") {
+      this.buttonMain.innerHTML = "create";
     }
     // Sign in Firebase using popup auth and Google as the identity provider.
     var provider = new firebase.auth.GoogleAuthProvider();
@@ -794,8 +797,22 @@ LiveCards.prototype.addNewCard = function() {
 LiveCards.prototype.deleteNewCard = function() {
     fileDisplay.innerHTML = "";
     this.storyForm.reset();
+    this.divTitle.innerHTML = "";
+    this.divTitle.removeAttribute('hidden');
+    this.txtTitle.removeAttribute('hidden');
+    this.divContent.innerHTML = "";
+    this.divContent.removeAttribute('hidden');
+    this.txtContent.removeAttribute('hidden');
+    this.divQuote.innerHTML = "";
+    this.divQuote.removeAttribute('hidden');
+    this.txtQuote.removeAttribute('hidden');
+    this.divEnding.innerHTML = "";
+    this.divEnding.removeAttribute('hidden');
+    this.txtEnding.removeAttribute('hidden');
     this.inputBlock.setAttribute('hidden', 'true');
-    this.functionButton.removeAttribute('hidden');
+    if (this.scrollSwitch.checked) {
+      this.functionButton.removeAttribute('hidden');
+    }
 };
 
 // Sets the URL of the given img element with the URL of the image stored in Cloud Storage.
@@ -909,9 +926,8 @@ LiveCards.prototype.signOut = function() {
     this.profilePic.style.backgroundImage = "url('./images/profile_placeholder.svg')";
     this.profileName.textContent = 'Not signing in!';
     this.deleteNewCard();
-    var buttonMain = document.getElementById('icon-main');
-    if (buttonMain.innerHTML == "create") {
-      buttonMain.innerHTML = "lock";
+    if (this.buttonMain.innerHTML == "create") {
+      this.buttonMain.innerHTML = "lock";
     }
   }
 };
@@ -929,17 +945,16 @@ LiveCards.prototype.onAuthStateChanged = function(user) {
     this.profileChip.removeAttribute('hidden');
     var loopMoreButton = document.getElementById("loop-more");
     loopMoreButton.className = loopMoreButton.className.replace("add-padding", "");
-    //this.functionButton.removeAttribute('hidden');
-    var buttonMain = document.getElementById('icon-main');
-    if (buttonMain.innerHTML == "lock") {
-      buttonMain.innerHTML = "create";
+    if (this.buttonMain.innerHTML == "lock") {
+      this.buttonMain.innerHTML = "create";
     }
   } else { // User is signed out!
     // Hide the input form.
     this.inputBlock.setAttribute('hidden', 'true');
     this.functionButton.removeAttribute('hidden');
-    var buttonMain = document.getElementById('icon-main');
-    if (buttonMain.innerHTML == "create") buttonMain.innerHTML = "lock";
+    if (this.buttonMain.innerHTML == "create") {
+      this.buttonMain.innerHTML = "lock";
+    }
   }
 };
 
@@ -955,11 +970,11 @@ LiveCards.prototype.checkSetup = function() {
 
 LiveCards.prototype.coWritingClick = function(clickID) {
   console.log("coWriter: " + clickID.substr(3));
+  this.deleteNewCard();
   scroll(0,0);
-  var buttonMain = document.getElementById('icon-main');
   if (!this.auth.currentUser) {
-    if (buttonMain.innerHTML == "lock") {
-      buttonMain.innerHTML = "create";
+    if (this.buttonMain.innerHTML == "lock") {
+      this.buttonMain.innerHTML = "create";
     }
     // Sign in Firebase using popup auth and Google as the identity provider.
     var provider = new firebase.auth.GoogleAuthProvider();
@@ -976,21 +991,31 @@ LiveCards.prototype.coWritingClick = function(clickID) {
     var recordContent = (snapshot.val().content);
     var recordQuote = (snapshot.val().quote);
     var recordEnding = (snapshot.val().ending);
-    this.divTitle.innerHTML = recordTitle;
-    this.divContent.innerHTML = recordContent;
-    this.divQuote.innerHTML = recordQuote;
-    this.divEnding.innerHTML = recordEnding;
+    if (recordTitle) {
+      this.divTitle.innerHTML = recordTitle;
+      this.txtTitle.setAttribute('hidden', 'true');
+    } else {
+      this.divTitle.setAttribute('hidden', 'true');
+    }
+    if (recordContent) {
+      this.divContent.innerHTML = recordContent;
+      this.txtContent.setAttribute('hidden', 'true');
+    } else {
+      this.divContent.setAttribute('hidden', 'true');
+    }
+    if (recordQuote) {
+      this.divQuote.innerHTML = recordQuote;
+      this.txtQuote.setAttribute('hidden', 'true');
+    } else {
+      this.divQuote.setAttribute('hidden', 'true');
+    }
+    if (recordEnding) {
+      this.divEnding.innerHTML = recordEnding;
+      this.txtEnding.setAttribute('hidden', 'true');
+    } else {
+      this.divEnding.setAttribute('hidden', 'true');
+    }
   }.bind(this));
-  /*
-  this.bookRef = this.database.ref('book-20170808165000'); // Reference to the database path.
-  this.bookRef.off(); // Make sure we remove all previous listeners.
-  if (!this.auth.currentUser) { // Clear User Name - if not signing in!
-      alert('Not signing in!');
-  } else {
-    var currentUser = this.auth.currentUser;
-    alert(currentUser.displayName);
-  }
-  */
 };
 
 LiveCards.prototype.likeClick = function(clickID) {
