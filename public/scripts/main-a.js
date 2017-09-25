@@ -890,18 +890,25 @@ LiveCards.prototype.addNewCard = function() {
   if (this.auth.currentUser) {
     this.inputBlock.removeAttribute('hidden');
     this.functionButton.setAttribute('hidden', 'true');
+    var currentUser = this.auth.currentUser;
+    var div = document.getElementsByClassName("users-container")[0];
+    div.getElementsByClassName("user-pic")[4].style.backgroundImage = 'url(' + currentUser.photoURL + ')';
+    div.getElementsByClassName("user-name")[4].innerHTML = currentUser.displayName;
+    div.getElementsByClassName("mdl-chip")[4].removeAttribute('hidden');
   } else {
-    if (this.buttonMain.innerHTML == "lock") {
-      this.buttonMain.innerHTML = "create";
-    }
-    // Sign in Firebase using popup auth and Google as the identity provider.
-    var provider = new firebase.auth.GoogleAuthProvider();
-    this.auth.signInWithPopup(provider);
+    this.signIn();
   }
 };
 
 //Delete the new card, clear image and form!!
 LiveCards.prototype.deleteNewCard = function() {
+    var div = document.getElementsByClassName("users-container")[0];
+    for (var i = 0; i < 5; i++) {
+      div.getElementsByClassName("mdl-chip")[i].setAttribute('hidden', 'true');
+      div.getElementsByClassName("user-pic")[i].style.backgroundImage =
+        "url('./images/profile_placeholder.svg')";
+      div.getElementsByClassName("user-name")[i].innerHTML = "";
+    }
     fileDisplay.innerHTML = "";
     this.storyForm.reset();
     this.divTitle.innerHTML = "";
@@ -938,6 +945,24 @@ LiveCards.prototype.setImageUri = function(imageUri, imgElement) {
 LiveCards.prototype.saveStory = function(event) {
   if (this.auth.currentUser) {
     event.preventDefault();
+
+    var div = document.getElementsByClassName("users-container")[0];
+    var chkPict = [];
+    var chkName = [];
+    for (var i = 0; i < 5; i++) {
+      if (div.getElementsByClassName("user-name")[i].innerHTML === "") {
+        chkPict[i] = div.getElementsByClassName("user-pic")[4].style.backgroundImage;
+        chkName[i] = div.getElementsByClassName("user-name")[4];
+        for (var x = i+1; x < 5; x++) {
+          chkPict[x] = "";
+          chkName[x] = "";
+        }
+        i = 5;
+      } else {
+        chkPict[i] = div.getElementsByClassName("user-pic")[i].style.backgroundImage;
+        chkName[i] = div.getElementsByClassName("user-name")[i];
+      }
+    }
     var file = this.imageUpload.files[0];
     if (file) {
       // Check that the user uploaded image or entered a title or any contents.
@@ -949,8 +974,16 @@ LiveCards.prototype.saveStory = function(event) {
         // Add a new message entry to the Firebase Database.
         this.bookRef = this.database.ref('book-20170808165000');
         this.bookRef.push({
-          name: currentUser.displayName,
-          photoUrl: currentUser.photoURL || './images/profile_placeholder.svg',
+          name: chkName[0],
+          photoUrl: chkPict[0] || './images/profile_placeholder.svg',
+          coWriterA: chkName[1],
+          photoUrlA: chkPict[1] || './images/profile_placeholder.svg',
+          coWriterB: chkName[2],
+          photoUrlB: chkPict[2] || './images/profile_placeholder.svg',
+          coWriterC: chkName[3],
+          photoUrlC: chkPict[3] || './images/profile_placeholder.svg',
+          coWriterD: chkName[4],
+          photoUrlD: chkPict[4] || './images/profile_placeholder.svg',
           title: this.titleStory.value,
           content: this.contentStory.value,
           quote: this.quoteStory.value,
@@ -987,8 +1020,16 @@ LiveCards.prototype.saveStory = function(event) {
         // Add a new message entry to the Firebase Database.
         this.bookRef = this.database.ref('book-20170808165000');
         this.bookRef.push({
-          name: currentUser.displayName,
-          photoUrl: currentUser.photoURL || '/images/profile_placeholder.svg',
+          name: chkName[0],
+          photoUrl: chkPict[0] || './images/profile_placeholder.svg',
+          coWriterA: chkName[1],
+          photoUrlA: chkPict[1] || './images/profile_placeholder.svg',
+          coWriterB: chkName[2],
+          photoUrlB: chkPict[2] || './images/profile_placeholder.svg',
+          coWriterC: chkName[3],
+          photoUrlC: chkPict[3] || './images/profile_placeholder.svg',
+          coWriterD: chkName[4],
+          photoUrlD: chkPict[4] || './images/profile_placeholder.svg',
           title: this.titleStory.value,
           content: this.contentStory.value,
           quote: this.quoteStory.value,
@@ -1017,7 +1058,8 @@ LiveCards.prototype.saveStory = function(event) {
 LiveCards.prototype.signIn = function() {
   // Sign in Firebase using popup auth and Google as the identity provider.
   var provider = new firebase.auth.GoogleAuthProvider();
-  this.auth.signInWithPopup(provider);
+  provider.addScope('https://www.googleapis.com/auth/plus.login');
+  this.auth.signInWithRedirect(provider);
 };
 
 // Signs-out of Live Cards.
@@ -1077,102 +1119,92 @@ LiveCards.prototype.checkSetup = function() {
 
 LiveCards.prototype.coWritingClick = function(clickID) {
   console.log("coWriter: " + clickID.substr(3));
-  this.deleteNewCard();
-  scroll(0,0);
   if (!this.auth.currentUser) {
-    if (this.buttonMain.innerHTML == "lock") {
-      this.buttonMain.innerHTML = "create";
-    }
-    // Sign in Firebase using popup auth and Google as the identity provider.
-    var provider = new firebase.auth.GoogleAuthProvider();
-    this.auth.signInWithPopup(provider);
+    this.signIn();
+  } else {
+    this.deleteNewCard();
+    scroll(0,0);
+    this.inputBlock.removeAttribute('hidden');
+    this.functionButton.setAttribute('hidden', 'true');
+    this.dataRef = this.database.ref('book-20170808165000/' + clickID.substr(3));
+    this.dataRef.once('value').then(function(snapshot) {
+      var recordName = (snapshot.val().name);
+      var recordPhoto = (snapshot.val().photoUrl);
+      var recordImage = (snapshot.val().imageUri);
+      var recordTitle = (snapshot.val().title);
+      var recordContent = (snapshot.val().content);
+      var recordQuote = (snapshot.val().quote);
+      var recordEnding = (snapshot.val().ending);
+      var recordWriterA = (snapshot.val().coWriterA);
+      var recordPhotoA = (snapshot.val().photoUrlA);
+      var recordWriterB = (snapshot.val().coWriterB);
+      var recordPhotoB = (snapshot.val().photoUrlB);
+      var recordWriterC = (snapshot.val().coWriterC);
+      var recordPhotoC = (snapshot.val().photoUrlC);
+      var recordWriterD = (snapshot.val().coWriterD);
+      var recordPhotoD = (snapshot.val().photoUrlD);
+
+      var currentUser = this.auth.currentUser;
+      var i = 0;
+      var div = document.getElementsByClassName("users-container")[i];
+      div.getElementsByClassName("user-pic")[i].style.backgroundImage = 'url(' + recordPhoto + ')';
+      div.getElementsByClassName("user-name")[i].innerHTML = recordName;
+      div.getElementsByClassName("mdl-chip")[i].removeAttribute('hidden');
+
+      if (recordImage) {
+
+      }
+      if (recordWriterA) {
+        i++;
+        div.getElementsByClassName("user-pic")[i].style.backgroundImage = 'url(' + recordPhotoA + ')';
+        div.getElementsByClassName("user-name")[i].innerHTML = value.recordWriterA;
+        div.getElementsByClassName("mdl-chip")[i].removeAttribute('hidden');
+      }
+      if (recordWriterB) {
+        i++;
+        div.getElementsByClassName("user-pic")[i].style.backgroundImage = 'url(' + recordPhotoB + ')';
+        div.getElementsByClassName("user-name")[i].innerHTML = value.recordWriterB;
+        div.getElementsByClassName("mdl-chip")[i].removeAttribute('hidden');
+      }
+      if (recordWriterC) {
+        i++;
+        div.getElementsByClassName("user-pic")[i].style.backgroundImage = 'url(' + recordPhotoC + ')';
+        div.getElementsByClassName("user-name")[i].innerHTML = value.recordWriterC;
+        div.getElementsByClassName("mdl-chip")[i].removeAttribute('hidden');
+      }
+      div.getElementsByClassName("user-pic")[4].style.backgroundImage = 'url(' + currentUser.photoURL + ')';
+      div.getElementsByClassName("user-name")[4].innerHTML = currentUser.displayName;
+      div.getElementsByClassName("mdl-chip")[4].removeAttribute('hidden');
+      if (recordTitle) {
+        this.titleStory.value = recordTitle;
+        this.divTitle.innerHTML = recordTitle.replace(/\n/g, '<br>');
+        this.txtTitle.setAttribute('hidden', 'true');
+      } else {
+        this.divTitle.setAttribute('hidden', 'true');
+      }
+      if (recordContent) {
+        this.contentStory.value = recordContent;
+        this.divContent.innerHTML = recordContent.replace(/\n/g, '<br>');
+        this.txtContent.setAttribute('hidden', 'true');
+      } else {
+        this.divContent.setAttribute('hidden', 'true');
+      }
+      if (recordQuote) {
+        this.quoteStory.value = recordQuote;
+        this.divQuote.innerHTML = recordQuote.replace(/\n/g, '<br>');
+        this.txtQuote.setAttribute('hidden', 'true');
+      } else {
+        this.divQuote.setAttribute('hidden', 'true');
+      }
+      if (recordEnding) {
+        this.endingStory.value = recordEnding;
+        this.divEnding.innerHTML = recordEnding.replace(/\n/g, '<br>');
+        this.txtEnding.setAttribute('hidden', 'true');
+      } else {
+        this.divEnding.setAttribute('hidden', 'true');
+      }
+    }.bind(this));
   }
-  this.inputBlock.removeAttribute('hidden');
-  this.functionButton.setAttribute('hidden', 'true');
-  this.dataRef = this.database.ref('book-20170808165000/' + clickID.substr(3));
-  this.dataRef.once('value').then(function(snapshot) {
-    var recordName = (snapshot.val().name);
-    var recordPhoto = (snapshot.val().photoUrl);
-    var recordImage = (snapshot.val().imageUri);
-    var recordTitle = (snapshot.val().title);
-    var recordContent = (snapshot.val().content);
-    var recordQuote = (snapshot.val().quote);
-    var recordEnding = (snapshot.val().ending);
-    var recordWriterA = (snapshot.val().coWriterA);
-    var recordPhotoA = (snapshot.val().photoUrlA);
-    var recordWriterB = (snapshot.val().coWriterB);
-    var recordPhotoB = (snapshot.val().photoUrlB);
-    var recordWriterC = (snapshot.val().coWriterC);
-    var recordPhotoC = (snapshot.val().photoUrlC);
-    var recordWriterD = (snapshot.val().coWriterD);
-    var recordPhotoD = (snapshot.val().photoUrlD);
-
-    var div = document.getElementsByClassName("users-container")[0];
-    div.getElementsByClassName("user-pic")[0].style.backgroundImage = 'url(' + recordPhoto + ')';
-    div.getElementsByClassName("user-name")[0].innerHTML = recordName;
-
-    if (recordImage) {
-
-    }
-    if (!recordWriterA) {
-      div.getElementsByClassName("mdl-chip")[1].setAttribute('hidden', 'true');
-      div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
-      div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
-      div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
-    } else {
-      div.getElementsByClassName("user-pic")[1].style.backgroundImage = 'url(' + recordPhotoA + ')';
-      div.getElementsByClassName("user-name")[1].innerHTML = value.recordWriterA;
-    }
-    if (!recordWriterB) {
-      div.getElementsByClassName("mdl-chip")[2].setAttribute('hidden', 'true');
-      div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
-      div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
-    } else {
-      div.getElementsByClassName("user-pic")[2].style.backgroundImage = 'url(' + recordPhotoB + ')';
-      div.getElementsByClassName("user-name")[2].innerHTML = value.recordWriterB;
-    }
-    if (!recordWriterC) {
-      div.getElementsByClassName("mdl-chip")[3].setAttribute('hidden', 'true');
-      div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
-    } else {
-      div.getElementsByClassName("user-pic")[3].style.backgroundImage = 'url(' + recordPhotoC + ')';
-      div.getElementsByClassName("user-name")[3].innerHTML = value.recordWriterC;
-    }
-    if (!recordWriterD) {
-      div.getElementsByClassName("mdl-chip")[4].setAttribute('hidden', 'true');
-    } else {
-      div.getElementsByClassName("user-pic")[4].style.backgroundImage = 'url(' + recordPhotoD + ')';
-      div.getElementsByClassName("user-name")[4].innerHTML = value.recordWriterD;
-    }
-    if (recordTitle) {
-      this.titleStory.value = recordTitle;
-      this.divTitle.innerHTML = recordTitle.replace(/\n/g, '<br>');
-      this.txtTitle.setAttribute('hidden', 'true');
-    } else {
-      this.divTitle.setAttribute('hidden', 'true');
-    }
-    if (recordContent) {
-      this.contentStory.value = recordContent;
-      this.divContent.innerHTML = recordContent.replace(/\n/g, '<br>');
-      this.txtContent.setAttribute('hidden', 'true');
-    } else {
-      this.divContent.setAttribute('hidden', 'true');
-    }
-    if (recordQuote) {
-      this.quoteStory.value = recordQuote;
-      this.divQuote.innerHTML = recordQuote.replace(/\n/g, '<br>');
-      this.txtQuote.setAttribute('hidden', 'true');
-    } else {
-      this.divQuote.setAttribute('hidden', 'true');
-    }
-    if (recordEnding) {
-      this.endingStory.value = recordEnding;
-      this.divEnding.innerHTML = recordEnding.replace(/\n/g, '<br>');
-      this.txtEnding.setAttribute('hidden', 'true');
-    } else {
-      this.divEnding.setAttribute('hidden', 'true');
-    }
-  }.bind(this));
 };
 
 LiveCards.prototype.likeClick = function(clickID) {

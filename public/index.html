@@ -53,25 +53,28 @@
                 <label class="mdl-textfield__label" for="title-story">Title</label>
               </div>
               <div class="users-container">
-                <span class="mdl-chip mdl-chip--contact">
+                <span hidden class="mdl-chip mdl-chip--contact">
                   <span class="mdl-chip__contact user-pic"></span>
                   <span class="mdl-chip__text user-name"></span>
                 </span>
-                <span class="mdl-chip mdl-chip--contact">
+                <span hidden class="mdl-chip mdl-chip--contact">
                   <span class="mdl-chip__contact user-pic"></span>
                   <span class="mdl-chip__text user-name"></span>
                 </span>
-                <span class="mdl-chip mdl-chip--contact">
+                <span hidden class="mdl-chip mdl-chip--contact">
                   <span class="mdl-chip__contact user-pic"></span>
                   <span class="mdl-chip__text user-name"></span>
                 </span>
-                <span class="mdl-chip mdl-chip--contact">
+                <span hidden class="mdl-chip mdl-chip--contact">
                   <span class="mdl-chip__contact user-pic"></span>
                   <span class="mdl-chip__text user-name"></span>
                 </span>
-                <span class="mdl-chip mdl-chip--contact">
+                <span hidden class="mdl-chip mdl-chip--contact mdl-chip--deletable">
                   <span class="mdl-chip__contact user-pic"></span>
                   <span class="mdl-chip__text user-name"></span>
+                  <button id="del-card" class="mdl-chip__action">
+                    <i class="material-icons">cancel</i>
+                  </button>
                 </span>
               </div>
               <div id="div-content" class="w3-panel w3-leftbar"></div>
@@ -98,11 +101,6 @@
                 <label class = "mdl-switch mdl-js-switch mdl-js-ripple-effect check-switch" for = "story-switch">
                   <input type = "checkbox" id = "story-switch" class = "mdl-switch__input">
                 </label>
-              </div>
-              <div class="mdl-card__menu">
-                <button id="del-card" class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                  <i class="material-icons">clear</i>
-                </button>
               </div>
             </div>
           </form>
@@ -148,7 +146,9 @@
       <span id="profile-chip" class="mdl-chip mdl-chip--contact mdl-chip--deletable">
         <span id="profile-pic" class="mdl-chip__contact"></span>
         <span id="profile-name" class="mdl-chip__text"></span>
-        <button id="sign-out" class="mdl-chip__action"><i class="material-icons">cancel</i></button>
+        <button id="sign-out" class="mdl-chip__action">
+          <i class="material-icons">cancel</i>
+        </button>
       </span>
     </div>
 

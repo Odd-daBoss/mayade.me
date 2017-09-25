@@ -94,6 +94,9 @@ html, body {
 .users-container > .mdl-button--icon {
   margin-top: 10px;
   margin-bottom: 0;
+  margin-left: -4px;
+}.users-container > .mdl-chip {
+  margin-right: 4px;
 }
 #loop-more {
   text-align: center;
